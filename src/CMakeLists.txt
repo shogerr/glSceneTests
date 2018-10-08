@@ -1,0 +1,25 @@
+set(SOURCE
+	${SOURCE}
+	${CMAKE_CURRENT_SOURCE_DIR}/app.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/engine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/engine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sdl_engine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/test_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
+	PARENT_SCOPE
+)
+
+set(HEADERS
+	${HEADERS}
+	${CMAKE_CURRENT_SOURCE_DIR}/common.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/engine_parts.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/engine.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sdl_engine.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/test_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/shader.hpp
+	PARENT_SCOPE
+)

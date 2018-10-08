@@ -1,0 +1,9 @@
+*.swo
+*.swp
+.vscode/
+
+include/
+libraries/
+build/
+
+*.zip
