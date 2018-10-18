@@ -4,7 +4,7 @@
 #include "common.hpp"
 #include "engine.hpp"
 #include "scene_manager.hpp"
-#include "test_scene.hpp"
+#include "helicopter_scene.hpp"
 
 constexpr auto WIDTH = 512;
 constexpr auto HEIGHT = 512;
@@ -72,45 +72,26 @@ int main(int argc, char *argv[])
 
     int width, height = 0;
 
-    bool mouseHeld = false;
-    int mouseInitialY = 1;
-
-    SDL_Event windowEvent;
+    SceneManager* mgr = SceneManager::getInstance();
+    SDL_Event e;
     for (;;)
     {
-        if (SDL_PollEvent(&windowEvent))
+        if (SDL_PollEvent(&e))
         {
-            switch (windowEvent.type)
+            switch (e.type)
             {
-            case SDL_MOUSEBUTTONDOWN:
-                mouseHeld = true;
-                mouseInitialY = windowEvent.motion.y;
-                LOGI("%d\n", windowEvent.motion.x);
-                break;
-            case SDL_MOUSEBUTTONUP:
-                mouseHeld = false;
+            case SDL_KEYDOWN:
+                LOGI("view change\n");
+                static_cast<HelicopterScene*>(mgr->getScene())->toggleView();
                 break;
             case SDL_QUIT:
                 goto exit;
             }
         }
         
-        if (mouseHeld)
-        {
-            int currentMouseY = windowEvent.motion.y;
-
-            SceneManager* mgr = SceneManager::getInstance();
-
-            if (currentMouseY < mouseInitialY)
-                static_cast<TestScene*>(mgr->getScene())->setViewScale(.01);
-            else
-                static_cast<TestScene*>(mgr->getScene())->setViewScale(-.01);
-        }
-
-        //LOGI("Mouse: %d\n", mouseHeld);
-
         SDL_GetWindowSize(window, &width, &height);
         engine->setScreenDimensions(width, height);
+
         engine->cycle();
         SDL_GL_SwapWindow(window);
     }

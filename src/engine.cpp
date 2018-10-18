@@ -1,13 +1,14 @@
 #include "common.hpp"
 #include "scene_manager.hpp"
-#include "test_scene.hpp"
 #include "engine.hpp"
+
+#include "helicopter_scene.hpp"
 
 static Engine* _engine = NULL;
 
 static const void _logOpenGlError(GLenum err)
 {
-    LOGE("%#05x\n", err);
+    LOGE("OpenGL Error: %#05x\n", err);
 }
 
 Engine::Engine()
@@ -64,7 +65,7 @@ void Engine::doFrame()
     if (mIsFirstFrame)
     {
         mIsFirstFrame = false;
-        mgr->RequestNewScene(new TestScene());
+        mgr->RequestNewScene(new HelicopterScene());
     }
 
     mgr->doFrame();
@@ -72,7 +73,7 @@ void Engine::doFrame()
     GLenum e;
     if ((e = glGetError()) != GL_NO_ERROR)
     {
-        _logOpenGlError(glGetError());
+        _logOpenGlError(e);
     }
 }
 
