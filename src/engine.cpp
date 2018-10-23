@@ -2,13 +2,22 @@
 #include "scene_manager.hpp"
 #include "engine.hpp"
 
-#include "helicopter_scene.hpp"
+#include "scenes/texture_scene.hpp"
 
 static Engine* _engine = NULL;
 
 static const void _logOpenGlError(GLenum err)
 {
-    LOGE("OpenGL Error: %#05x\n", err);
+    switch (err)
+    {
+    case GL_NO_ERROR:
+        LOGE("OpenGL Error: GL_NO_ERROR\n");
+        break;
+
+    default:
+        LOGE("OpenGL Error: %#05x\n", err);
+        break;
+    }
 }
 
 Engine::Engine()
@@ -48,8 +57,7 @@ bool Engine::preRender()
     {
         if (!mHasGLObjects)
         {
-            LOGI("Initializing GL Objects...");
-            if (!initGLObjects())
+           if (!initGLObjects())
                 return false;
         }
     } while (0);
@@ -65,7 +73,7 @@ void Engine::doFrame()
     if (mIsFirstFrame)
     {
         mIsFirstFrame = false;
-        mgr->RequestNewScene(new HelicopterScene());
+        mgr->RequestNewScene(new TextureScene());
     }
 
     mgr->doFrame();

@@ -4,7 +4,8 @@
 #include "common.hpp"
 #include "engine.hpp"
 #include "scene_manager.hpp"
-#include "helicopter_scene.hpp"
+
+#include "scenes/texture_scene.hpp"
 
 constexpr auto WIDTH = 512;
 constexpr auto HEIGHT = 512;
@@ -74,15 +75,36 @@ int main(int argc, char *argv[])
 
     SceneManager* mgr = SceneManager::getInstance();
     SDL_Event e;
+
     for (;;)
     {
+        TextureScene* scene = static_cast<TextureScene*>(mgr->getInstance()->getScene());
         if (SDL_PollEvent(&e))
         {
             switch (e.type)
             {
             case SDL_KEYDOWN:
-                LOGI("view change\n");
-                static_cast<HelicopterScene*>(mgr->getScene())->toggleView();
+                switch (e.key.keysym.sym)
+                {
+                case SDLK_1:
+                    scene->SetTextureView(1);
+                    break;
+                case SDLK_2:
+                    scene->SetTextureView(2);
+                    break;
+                case SDLK_3:
+                    scene->SetTextureView(3);
+                    break;
+                case SDLK_4:
+                    scene->SetTextureView(4);
+                    break;
+                case SDLK_5:
+                    scene->SetTextureView(5);
+                    break;
+                case SDLK_6:
+                    scene->SetTextureView(6);
+                    break;
+                }
                 break;
             case SDL_QUIT:
                 goto exit;

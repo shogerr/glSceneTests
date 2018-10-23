@@ -8,8 +8,12 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/test_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/helicopter_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/helicopter_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
 	PARENT_SCOPE
 )
@@ -24,8 +28,12 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/test_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/helicopter_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/helicopter_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.hpp
 	PARENT_SCOPE
 )

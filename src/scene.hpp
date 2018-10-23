@@ -7,9 +7,9 @@ class Scene
 {
 public:
     ~Scene();
-    virtual void onStartGraphics();
-    virtual void onScreenResize(int width, int height);
-    virtual void doFrame();
+    virtual void OnStartGraphics();
+    virtual void OnScreenResize(int width, int height);
+    virtual void DoFrame();
 };
 
 #endif // __SCENE_HPP
