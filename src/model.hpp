@@ -12,14 +12,18 @@ class Model
 {
 public:
     Model(std::string path);
+    void Draw();
     // TODO: take mMeshes out of public space
     std::vector<Mesh> meshes_;
 private:
     std::vector<Mesh::Texture> loaded_textures_;
     std::string model_directory_;
 
-    void loadModel(std::string& path);
-    Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+    void LoadModel(std::string& path);
+
+    void ProcessNode(aiNode* node, const aiScene* scene);
+    Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+
     std::vector<Mesh::Texture> loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name);
 };
 

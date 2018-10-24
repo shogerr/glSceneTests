@@ -32,10 +32,10 @@ void TextureScene::OnStartGraphics()
 
     last_frame_ns_ = 0;
 
-    sphere_model_ = new Model("../src/test/face_textured.obj");
+    sphere_model_ = new ModelSingle("../src/test/face_textured.obj");
 
-    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/vertex.glsl"},
-                                                                     {GL_FRAGMENT_SHADER, "../src/shaders/fragment.glsl"} };
+    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/texture_vertex.glsl"},
+                                                                     {GL_FRAGMENT_SHADER, "../src/shaders/texture_fragment.glsl"} };
 
     shader_ = new Shader(shaderFilenames);
 
@@ -48,7 +48,7 @@ void TextureScene::OnStartGraphics()
     glBindTexture(GL_TEXTURE_2D, emptytex_);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, &image[0]);
 
-    scenetex_ = TextureFromFile("eyes.jpg", "../src/test");
+    scenetex_ = ModelSingle::TextureFromFile("eyes.jpg", "../src/test");
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);

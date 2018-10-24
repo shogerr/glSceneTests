@@ -7,6 +7,7 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/model_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.cpp
@@ -27,6 +28,7 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/model_single.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.hpp

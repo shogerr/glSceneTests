@@ -1,14 +1,14 @@
-#include "model.hpp"
+#include "model_single.hpp"
 #include <assimp/postprocess.h>
 #include <SOIL2/SOIL2.h>
 #include <fstream>
 
-Model::Model(std::string path)
+ModelSingle::ModelSingle(std::string path)
 {
     LoadModel(path);
 }
 
-void Model::LoadModel(std::string& path)
+void ModelSingle::LoadModel(std::string& path)
 {
     Assimp::Importer importer;
 
@@ -39,7 +39,7 @@ void Model::LoadModel(std::string& path)
     //meshes_.push_back(ProcessMesh(scene->mMeshes[0], scene));
 }
 
-void Model::ProcessNode(aiNode * node, const aiScene * scene)
+void ModelSingle::ProcessNode(aiNode * node, const aiScene * scene)
 {
     for (GLuint i = 0; i < node->mNumMeshes; ++i)
     {
@@ -51,15 +51,15 @@ void Model::ProcessNode(aiNode * node, const aiScene * scene)
         ProcessNode(node->mChildren[i], scene);
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+MeshSingle ModelSingle::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
-    std::vector<Mesh::Vertex> vertices;
+    std::vector<MeshSingle::Vertex> vertices;
     std::vector<GLuint> indices;
-    std::vector<Mesh::Texture> textures;
+    std::vector<MeshSingle::Texture> textures;
 
     for (GLuint i = 0; i < mesh->mNumVertices; i++)
     {
-        Mesh::Vertex vertex;
+        MeshSingle::Vertex vertex;
         vertex.position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.0f);
         vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 
@@ -90,16 +90,16 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         LOGI("Found materials\n");
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<Mesh::Texture> diffuse_maps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<MeshSingle::Texture> diffuse_maps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuse_maps.begin(), diffuse_maps.end());
     }
 
-    return Mesh(vertices, indices, textures);
+    return MeshSingle(vertices, indices, textures);
 }
 
-std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
+std::vector<MeshSingle::Texture> ModelSingle::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
 {
-    std::vector<Mesh::Texture> textures;
+    std::vector<MeshSingle::Texture> textures;
 
     bool skip = false;
 
@@ -121,7 +121,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial* material, aiT
 
         if (!skip)
         {
-            Mesh::Texture texture;
+            MeshSingle::Texture texture;
             texture.id = TextureFromFile(str.C_Str(), model_directory_);
             texture.type = type_name;
             texture.path = str;
@@ -134,7 +134,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial* material, aiT
     return textures;
 }
 
-GLuint TextureFromFile(const char* path, std::string directory)
+GLuint ModelSingle::TextureFromFile(const char* path, std::string directory)
 {
     std::string filename = directory + '/' + std::string(path);
     //std::string filename = "./" + std::string(path);

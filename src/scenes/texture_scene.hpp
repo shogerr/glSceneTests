@@ -19,7 +19,7 @@ public:
 
 private:
     uint64_t last_frame_ns_;
-    Model* sphere_model_;
+    ModelSingle* sphere_model_;
     Shader* shader_;
 
     GLuint emptytex_;
