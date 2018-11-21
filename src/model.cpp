@@ -3,9 +3,32 @@
 #include <SOIL2/SOIL2.h>
 #include <fstream>
 
-Model::Model(std::string path)
+Model::Model(std::string path) :
+    Model(path, 1)
+{}
+
+Model::Model(std::string path, unsigned int instance_count)
 {
+    instance_count_ = instance_count;
     LoadModel(path);
+
+    identity_ = glm::mat4(1.0);
+    model_ = &identity_;
+}
+
+void Model::Draw(Shader* shader)
+{
+    for (auto m : meshes_)
+    {
+        m.UpdateModel(model_);
+        m.Draw(shader);
+    }
+
+}
+
+void Model::UpdateModel(glm::mat4* model)
+{
+    model_ = model;
 }
 
 void Model::LoadModel(std::string& path)
@@ -22,7 +45,7 @@ void Model::LoadModel(std::string& path)
         return;
     }
 
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene)
     {
@@ -36,18 +59,18 @@ void Model::LoadModel(std::string& path)
     LOGI("model directory: %s\n", model_directory_.c_str());
 
     ProcessNode(scene->mRootNode, scene);
-    //meshes_.push_back(ProcessMesh(scene->mMeshes[0], scene));
 }
 
 void Model::ProcessNode(aiNode * node, const aiScene * scene)
 {
-    for (GLuint i = 0; i < node->mNumMeshes; ++i)
+    LOGI("Processing node\n");
+    for (GLuint i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes_.push_back(ProcessMesh(mesh, scene));
     }
 
-    for (GLuint i = 0; i < node->mNumChildren; ++i)
+    for (GLuint i = 0; i < node->mNumChildren; i++)
         ProcessNode(node->mChildren[i], scene);
 }
 
@@ -87,17 +110,20 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     // Process Materials 
     if (mesh->mMaterialIndex >= 0)
     {
-        LOGI("Found materials\n");
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<Mesh::Texture> diffuse_maps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<Mesh::Texture> diffuse_maps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuse_maps.begin(), diffuse_maps.end());
+
+        std::vector<Mesh::Texture> specular_maps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
+        LOGI("Found materials:\nTextures: %d\nSpecularMaps: %d\n", diffuse_maps.size(), specular_maps.size());
     }
 
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, textures, instance_count_);
 }
 
-std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
+std::vector<Mesh::Texture> Model::LoadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
 {
     std::vector<Mesh::Texture> textures;
 
@@ -108,7 +134,7 @@ std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial* material, aiT
     {
         aiString str;
         material->GetTexture(type, i, &str);
-        LOGI("material: texture: %s\n", str.C_Str());
+        LOGI("material texture: %s\n", str.C_Str());
         for (GLuint j = 0; j < loaded_textures_.size(); ++j)
         {
             if (loaded_textures_[j].path == str)
@@ -160,12 +186,12 @@ GLuint TextureFromFile(const char* path, std::string directory)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_FRAGMENT_COLOR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_FRAGMENT_COLOR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 11);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 11);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     LOGI("image loaded: %s\n", filename.c_str());

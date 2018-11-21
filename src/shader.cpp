@@ -15,17 +15,7 @@ Shader::Shader(std::vector<std::pair<GLenum, std::string>> shaderFilenames)
         s.second = shaderSource;
     }
 
-    mProgram = createProgram(&shaderFilenames);
-
-    glUseProgram(mProgram);
-    mMVPMatLoc = glGetUniformLocation(mProgram, "u_MVP");
-
-    if (mMVPMatLoc < 0)
-    {
-        LOGE("u_MVP uniform not found.");
-    }
-
-    glUseProgram(0);
+    program_ = createProgram(&shaderFilenames);
 }
 
 Shader::~Shader()

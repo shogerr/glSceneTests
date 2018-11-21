@@ -12,9 +12,12 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/helicopter_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
 	PARENT_SCOPE
 )
@@ -33,9 +36,12 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/helicopter_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.hpp
 	PARENT_SCOPE
 )

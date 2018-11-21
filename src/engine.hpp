@@ -9,19 +9,20 @@ public:
     Engine();
     ~Engine();
 
-    void cycle();
-    void doFrame();
-    static Engine* getInstance();
+    void DoFrame();
+    static Engine* GetInstance();
 
-    void setScreenDimensions(int width, int height);
+    void SetScreenDimensions(int width, int height);
 private:
     bool preRender();
     bool initGLObjects();
-    bool mIsFirstFrame = true;
-    bool mHasGLObjects = false;
+    bool first_frame_;
+    bool has_globjects_;
 
     int mWindowHeight;
     int mWindowWidth;
+
+    void ConfigureOpenGL();
 };
 
 #endif // __RENDERER.HPP

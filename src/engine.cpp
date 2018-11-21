@@ -2,7 +2,7 @@
 #include "scene_manager.hpp"
 #include "engine.hpp"
 
-#include "scenes/texture_scene.hpp"
+#include "scenes/shader_scene.hpp"
 
 static Engine* _engine = NULL;
 
@@ -20,7 +20,7 @@ static const void _logOpenGlError(GLenum err)
     }
 }
 
-Engine::Engine()
+Engine::Engine () : first_frame_(true), has_globjects_(false)
 {
     _engine = this;
 }
@@ -30,53 +30,57 @@ Engine::~Engine()
 
 }
 
-Engine* Engine::getInstance()
+Engine* Engine::GetInstance()
 {
     return _engine;
 }
 
-void Engine::cycle()
-{
-    doFrame();
-}
-
-void Engine::setScreenDimensions(int width, int height)
+void Engine::SetScreenDimensions(int width, int height)
 {
     if (mWindowWidth != width || mWindowHeight != height)
     {
-        SceneManager* mgr = SceneManager::getInstance();
+        SceneManager* mgr = SceneManager::GetInstance();
         mWindowWidth = width;
         mWindowHeight = height;
         mgr->setScreenSize(width, height);
     }
 }
 
+void Engine::ConfigureOpenGL()
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+}
+
 bool Engine::preRender()
 {
     do
     {
-        if (!mHasGLObjects)
+        if (!has_globjects_)
         {
            if (!initGLObjects())
                 return false;
         }
     } while (0);
+
+    ConfigureOpenGL();
     return true;
 }
 
-void Engine::doFrame()
+void Engine::DoFrame()
 {
     if (!preRender())
         return;
 
-    SceneManager* mgr = SceneManager::getInstance();
-    if (mIsFirstFrame)
+    SceneManager* mgr = SceneManager::GetInstance();
+    if (first_frame_)
     {
-        mIsFirstFrame = false;
-        mgr->RequestNewScene(new TextureScene());
+        first_frame_ = false;
+        mgr->RequestNewScene(new ShaderScene());
     }
 
-    mgr->doFrame();
+    mgr->DoFrame();
 
     GLenum e;
     if ((e = glGetError()) != GL_NO_ERROR)
@@ -87,13 +91,13 @@ void Engine::doFrame()
 
 bool Engine::initGLObjects()
 {
-    if (!mHasGLObjects)
+    if (!has_globjects_)
     {
         LOGI("Initializing GL objects...\n");
-        SceneManager* mgr = SceneManager::getInstance();
+        SceneManager* mgr = SceneManager::GetInstance();
         mgr->startGraphics();
         _logOpenGlError(glGetError());
-        mHasGLObjects = true;
+        has_globjects_ = true;
     }
 
     return true;

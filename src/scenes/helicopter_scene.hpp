@@ -1,8 +1,8 @@
 #ifndef __HELICOPTER_SCENE_HPP
 #define __HELICOPTER_SCENE_HPP
 
-#include "engine_parts.hpp"
-#include "model.hpp"
+#include "../engine_parts.hpp"
+#include "../model.hpp"
 
 class HelicopterScene : public Scene
 {

@@ -11,8 +11,7 @@ public:
     Shader();
     Shader(std::vector<std::pair<GLenum, std::string>> shaderFilenames);
     virtual ~Shader();
-    GLuint mProgram;
-    GLuint mMVPMatLoc;
+    GLuint program_;
 private:
     std::string loadShader(const std::string& filename);
     GLuint createProgram(std::vector<std::pair<GLenum, std::string>>* shaders);

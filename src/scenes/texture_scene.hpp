@@ -1,4 +1,5 @@
 #include "../engine_parts.hpp"
+#include "../model_single.hpp"
 
 typedef struct particle {
     glm::vec3 s;

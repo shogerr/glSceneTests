@@ -239,7 +239,7 @@ void HelicopterScene::DoFrame()
 {
     glClearColor(.2f, .2f, .2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(mShader->mProgram);
+    glUseProgram(mShader->program_);
     step();
     glBindVertexArray(mVA[VA_HELI]);
     glDrawElements(GL_TRIANGLES, mHelicopterMesh->meshes_[0].indices_.size(), GL_UNSIGNED_INT, 0);

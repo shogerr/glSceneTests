@@ -5,11 +5,13 @@
 #include "engine.hpp"
 #include "scene_manager.hpp"
 
-#include "scenes/texture_scene.hpp"
+#include "scenes/shader_scene.hpp"
+#include "scenes/ball_scene.hpp"
+#include "scenes/bezier_scene.hpp"
+#include "scenes/instance_test.hpp"
 
-constexpr auto WIDTH = 512;
-constexpr auto HEIGHT = 512;
-
+constexpr auto WIDTH = 768;
+constexpr auto HEIGHT = 768;
 
 void checkSDLError(int line = -1)
 {
@@ -73,12 +75,11 @@ int main(int argc, char *argv[])
 
     int width, height = 0;
 
-    SceneManager* mgr = SceneManager::getInstance();
+    SceneManager* mgr = SceneManager::GetInstance();
     SDL_Event e;
 
     for (;;)
     {
-        TextureScene* scene = static_cast<TextureScene*>(mgr->getInstance()->getScene());
         if (SDL_PollEvent(&e))
         {
             switch (e.type)
@@ -86,23 +87,35 @@ int main(int argc, char *argv[])
             case SDL_KEYDOWN:
                 switch (e.key.keysym.sym)
                 {
-                case SDLK_1:
-                    scene->SetTextureView(1);
+                case SDLK_F1:
+                    mgr->RequestNewScene(new BallScene);
+                    break;
+                case SDLK_F2:
+                    mgr->RequestNewScene(new ShaderScene);
+                    break;
+                case SDLK_F3:
+                    mgr->RequestNewScene(new BezierScene);
+                    break;
+                case SDLK_F4:
+                    mgr->RequestNewScene(new InstanceTest);
+                    break;
+                case SDLK_0:
+                    mgr->Poke(0);
                     break;
                 case SDLK_2:
-                    scene->SetTextureView(2);
+                    mgr->Poke(1);
                     break;
                 case SDLK_3:
-                    scene->SetTextureView(3);
+                    mgr->Poke(2);
                     break;
                 case SDLK_4:
-                    scene->SetTextureView(4);
+                    mgr->Poke(3);
                     break;
                 case SDLK_5:
-                    scene->SetTextureView(5);
+                    mgr->Poke(4);
                     break;
                 case SDLK_6:
-                    scene->SetTextureView(6);
+                    mgr->Poke(5);
                     break;
                 }
                 break;
@@ -112,9 +125,9 @@ int main(int argc, char *argv[])
         }
         
         SDL_GetWindowSize(window, &width, &height);
-        engine->setScreenDimensions(width, height);
+        engine->SetScreenDimensions(width, height);
 
-        engine->cycle();
+        engine->DoFrame();
         SDL_GL_SwapWindow(window);
     }
 

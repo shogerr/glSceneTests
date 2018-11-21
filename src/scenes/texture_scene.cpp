@@ -98,9 +98,9 @@ void TextureScene::Step()
 
     theta_ += dt * dir_;
 
-    glProgramUniform1f(shader_->mProgram, 0, theta_);
-    glProgramUniform2f(shader_->mProgram, 1, focus_.s.x, focus_.s.y);
-    glProgramUniform1i(shader_->mProgram, 3, texture_scene_);
+    glProgramUniform1f(shader_->program_, 0, theta_);
+    glProgramUniform2f(shader_->program_, 1, focus_.s.x, focus_.s.y);
+    glProgramUniform1i(shader_->program_, 3, texture_scene_);
 
 update_time:
     last_frame_ns_ = now;
@@ -110,11 +110,11 @@ void TextureScene::DoFrame()
 {
     glClearColor(.2f, .2f, .2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(shader_->mProgram);
+    glUseProgram(shader_->program_);
 
     Step();
 
-    //glUniform1i(shader_->mProgram, 2);
+    //glUniform1i(shader_->program_, 2);
 
     switch (texture_scene_)
     {
