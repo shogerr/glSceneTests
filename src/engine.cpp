@@ -4,7 +4,7 @@
 
 #include "scenes/shader_scene.hpp"
 
-static Engine* _engine = NULL;
+static Engine* g_engine = NULL;
 
 static const void _logOpenGlError(GLenum err)
 {
@@ -22,17 +22,17 @@ static const void _logOpenGlError(GLenum err)
 
 Engine::Engine () : first_frame_(true), has_globjects_(false)
 {
-    _engine = this;
+    g_engine = this;
 }
 
 Engine::~Engine()
 {
-
+    g_engine = NULL;
 }
 
 Engine* Engine::GetInstance()
 {
-    return _engine;
+    return g_engine;
 }
 
 void Engine::SetScreenDimensions(int width, int height)
@@ -42,7 +42,7 @@ void Engine::SetScreenDimensions(int width, int height)
         SceneManager* mgr = SceneManager::GetInstance();
         mWindowWidth = width;
         mWindowHeight = height;
-        mgr->setScreenSize(width, height);
+        mgr->SetScreenSize(width, height);
     }
 }
 
@@ -51,6 +51,23 @@ void Engine::ConfigureOpenGL()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+}
+
+void Engine::KillContext()
+{
+    KillGlObjects();
+}
+
+void Engine::KillGlObjects()
+{
+    if (has_globjects_)
+    {
+        SceneManager *mgr = SceneManager::GetInstance();
+        mgr->KillGraphics();
+        has_globjects_ = false;
+    }
+
+    LOGD("Engine: Context killed.");
 }
 
 bool Engine::preRender()
@@ -95,7 +112,7 @@ bool Engine::initGLObjects()
     {
         LOGI("Initializing GL objects...\n");
         SceneManager* mgr = SceneManager::GetInstance();
-        mgr->startGraphics();
+        mgr->StartGraphics();
         _logOpenGlError(glGetError());
         has_globjects_ = true;
     }

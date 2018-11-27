@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     glClear(GL_COLOR_BUFFER_BIT);
 
     int width, height = 0;
+    int mouse_x, mouse_y;
 
     SceneManager* mgr = SceneManager::GetInstance();
     SDL_Event e;
@@ -84,6 +85,10 @@ int main(int argc, char *argv[])
         {
             switch (e.type)
             {
+            case SDL_MOUSEMOTION:
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                mgr->UpdateMouseMotion((float)mouse_x/width, (float)mouse_y/height);
+                break;
             case SDL_KEYDOWN:
                 switch (e.key.keysym.sym)
                 {

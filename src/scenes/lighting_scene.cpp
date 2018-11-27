@@ -23,7 +23,7 @@ void LightingScene::OnStartGraphics()
 
     SceneManager* mgr = SceneManager::GetInstance();
     
-    projection_ = glm::perspective(glm::radians(65.0f), mgr->getScreenAspect(), 0.1f, 100.0f);
+    projection_ = glm::perspective(glm::radians(65.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
 
     view_position_ = glm::vec3(0, 1.0, -2.5);
     view_ = glm::lookAt(view_position_, glm::vec3(0), glm::vec3(0, 1, 0));

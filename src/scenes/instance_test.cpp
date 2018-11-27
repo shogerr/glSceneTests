@@ -14,7 +14,7 @@ void InstanceTest::OnStartGraphics()
 
     SceneManager* mgr = SceneManager::GetInstance();
 
-    projection_ = glm::perspective(glm::radians(45.0f), mgr->getScreenAspect(), 0.1f, 100.0f);
+    projection_ = glm::perspective(glm::radians(45.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
 
     view_position_ = glm::vec3(0, 3.0, -1.5);
     view_ = glm::lookAt(view_position_, glm::vec3(0.0), glm::vec3(0.0, 1.0, 0.0));

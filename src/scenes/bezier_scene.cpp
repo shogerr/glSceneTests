@@ -20,7 +20,7 @@ void BezierScene::OnStartGraphics()
     view_ = glm::lookAt(glm::vec3(0.0,0.0,1.0), glm::vec3(0.0), glm::vec3(0, 1, 0));
 
     SceneManager* mgr = SceneManager::GetInstance();
-    //projection_ = glm::perspective(glm::radians(45.0f), mgr->getScreenAspect(), 0.1f, 100.0f);
+    //projection_ = glm::perspective(glm::radians(45.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
     projection_ = glm::ortho(-256.0f, 256.0f, -256.0f, 256.0f, -350.0f, 350.0f);
 
     lastframe_ns_ = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();

@@ -1,5 +1,5 @@
 #ifndef __ENGINE_HPP
-#define _ENGINE_HPP
+#define __ENGINE_HPP
 
 #include "common.hpp"
 #include <glm/ext.hpp>
@@ -23,6 +23,8 @@ private:
     int mWindowWidth;
 
     void ConfigureOpenGL();
+    void KillContext();
+    void KillGlObjects();
 };
 
 #endif // __RENDERER.HPP

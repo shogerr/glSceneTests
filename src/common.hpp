@@ -6,15 +6,17 @@
 #endif
 
 #include <GL/glew.h>
-#include <gl/gl.h>
+#include <GL/gl.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
 #define GLM_FORCE_RADIANS
 
 #include <stdio.h>
+
 #define LOGE(...) ( printf(__VA_ARGS__) )
 #define LOGI(...) ( printf(__VA_ARGS__) )
+#define LOGD(...) ( printf(__VA_ARGS__) )
 
 // Clean up a resource (delete and set to null).
 template<typename T> void CleanUp(T** pptr) {
