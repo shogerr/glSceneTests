@@ -1,4 +1,4 @@
-#include "lighting_scene.hpp"
+#include <scenes/lighting_scene.hpp>
 #include <chrono>
 
 
@@ -13,9 +13,9 @@ void LightingScene::OnStartGraphics()
     shaders_.push_back(new Shader(object_shaders));
     shaders_.push_back(new Shader(light_shaders));
 
-    scene_model_ = new Model("../src/test/b_sphere2.obj");
-    sphere_model_ = new Model("../src/test/two_spheres.obj");
-    light_model_ = new Model("../src/test/sphere_object.obj", 3);
+    scene_model_ = new gl00::Model("../src/test/b_sphere2.obj");
+    sphere_model_ = new gl00::Model("../src/test/two_spheres.obj");
+    light_model_ = new gl00::Model("../src/test/sphere_object.obj", 3);
 
     light_state_ = 15;
 
@@ -39,7 +39,7 @@ void LightingScene::OnStartGraphics()
     g_pointlights[1].t->light.diffuse = glm::vec3(1.0, 1.0, 0.0);
     g_pointlights[1].t->light.specular = glm::vec3(1.0, 1.0, 0.0);
 
-    g_object.SetAngularVelocity(glm::vec3(.9));
+    g_object.SetAngularVelocity(glm::vec3(.9f));
 
     glBindVertexArray(light_model_->meshes_[0].vao_);
 

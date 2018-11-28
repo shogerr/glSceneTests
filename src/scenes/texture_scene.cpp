@@ -1,8 +1,7 @@
-#include "texture_scene.hpp"
+#include <scenes/texture_scene.hpp>
 #include <chrono>
 #include <random>
 
-#define EPSILON 0.1f
 
 TextureScene::TextureScene()
 {
@@ -15,13 +14,6 @@ void TextureScene::SetTextureView(int scene_view)
     texture_scene_ = scene_view;
 }
 
-bool Comparef(float a, float b)
-{
-    float c = a - b;
-    if (c < EPSILON && -c < EPSILON)
-        return true;
-    return false;
-}
 
 void TextureScene::OnStartGraphics()
 {
@@ -72,23 +64,23 @@ void TextureScene::Step()
 
     focus_.s += dt * focus_.v;
 
-    if (Comparef(focus_.s.x, 0.0))
+    if (Comparef(focus_.s.x, 0.0f))
     {
         focus_.s.x = 0.1f;
         focus_.v.x = -focus_.e * focus_.v.x;
     }
-    else if (Comparef(focus_.s.x, 1.0))
+    else if (Comparef(focus_.s.x, 1.0f))
     {
         focus_.s.x = .9f;
         focus_.v.x = -focus_.e*focus_.v.x;
     }
 
-    if (Comparef(focus_.s.y, 0.0))
+    if (Comparef(focus_.s.y, 0.0f))
     {
         focus_.s.y = 0.1f;
         focus_.v.y = -focus_.e * focus_.v.y;
     }
-    else if (Comparef(focus_.s.y, 1.0))
+    else if (Comparef(focus_.s.y, 1.0f))
     {
         focus_.s.y = .9f;
         focus_.v.y = -focus_.e * focus_.v.y;

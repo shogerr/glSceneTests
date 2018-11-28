@@ -4,7 +4,7 @@
 
 #include "scenes/shader_scene.hpp"
 
-static Engine* g_engine = NULL;
+static gl00::Engine* g_engine = NULL;
 
 static const void _logOpenGlError(GLenum err)
 {
@@ -20,22 +20,22 @@ static const void _logOpenGlError(GLenum err)
     }
 }
 
-Engine::Engine () : first_frame_(true), has_globjects_(false)
+gl00::Engine::Engine () : first_frame_(true), has_globjects_(false)
 {
     g_engine = this;
 }
 
-Engine::~Engine()
+gl00::Engine::~Engine()
 {
     g_engine = NULL;
 }
 
-Engine* Engine::GetInstance()
+gl00::Engine* gl00::Engine::GetInstance()
 {
     return g_engine;
 }
 
-void Engine::SetScreenDimensions(int width, int height)
+void gl00::Engine::SetScreenDimensions(int width, int height)
 {
     if (mWindowWidth != width || mWindowHeight != height)
     {
@@ -46,19 +46,19 @@ void Engine::SetScreenDimensions(int width, int height)
     }
 }
 
-void Engine::ConfigureOpenGL()
+void gl00::Engine::ConfigureOpenGL()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
-void Engine::KillContext()
+void gl00::Engine::KillContext()
 {
     KillGlObjects();
 }
 
-void Engine::KillGlObjects()
+void gl00::Engine::KillGlObjects()
 {
     if (has_globjects_)
     {
@@ -70,7 +70,7 @@ void Engine::KillGlObjects()
     LOGD("Engine: Context killed.");
 }
 
-bool Engine::preRender()
+bool gl00::Engine::preRender()
 {
     do
     {
@@ -85,7 +85,7 @@ bool Engine::preRender()
     return true;
 }
 
-void Engine::DoFrame()
+void gl00::Engine::DoFrame()
 {
     if (!preRender())
         return;
@@ -106,7 +106,7 @@ void Engine::DoFrame()
     }
 }
 
-bool Engine::initGLObjects()
+bool gl00::Engine::initGLObjects()
 {
     if (!has_globjects_)
     {

@@ -1,15 +1,16 @@
 set(SOURCE
 	${SOURCE}
-	${CMAKE_CURRENT_SOURCE_DIR}/app.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/engine.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/engine.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scene_object.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/camera.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.cpp
@@ -17,31 +18,5 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/camera.cpp
-	PARENT_SCOPE
-)
-
-set(HEADERS
-	${HEADERS}
-	${CMAKE_CURRENT_SOURCE_DIR}/common.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/engine_parts.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/engine.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/model.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/model_single.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/shader.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/camera.hpp
 	PARENT_SCOPE
 )

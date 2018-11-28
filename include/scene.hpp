@@ -1,8 +1,6 @@
 #ifndef __SCENE_HPP
 #define __SCENE_HPP
 
-#include "common.hpp"
-
 class Scene
 {
 public:

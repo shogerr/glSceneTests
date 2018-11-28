@@ -2,9 +2,9 @@
 *.swp
 .vscode/
 
-include/
 libraries/
+
 build/
-test_build/
+testbuild/
 
 *.zip

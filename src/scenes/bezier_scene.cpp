@@ -1,4 +1,4 @@
-#include "bezier_scene.hpp"
+#include <scenes/bezier_scene.hpp>
 #include <chrono>
 
 void BezierScene::OnStartGraphics()
@@ -27,7 +27,7 @@ void BezierScene::OnStartGraphics()
     glEnable(GL_PROGRAM_POINT_SIZE);
 
     Line l = Line{};
-    LOGI("resolution: %\d", l.resolution_);
+    LOGI("resolution: %d", l.resolution_);
 
     int d = 9;
     std::vector<glm::vec3> cp = {};
@@ -133,11 +133,11 @@ void BezierScene::DoFrame()
     Line l_2 = lines_.at(1);
 
     l.control_points_[2].y = glm::sin(timer_);
-    l.control_points_[3].x = glm::sin(1.5*timer_);
-    l.control_points_[6].y = -1*glm::sin(timer_);
+    l.control_points_[3].x = glm::sin(1.5f*timer_);
+    l.control_points_[6].y = -1.0f*glm::sin(timer_);
     l.control_points_[0].x = glm::cos(timer_);
-    l.control_points_[9].y = -1*glm::cos(timer_);
-    l.control_points_[0].z = -.5*glm::cos(timer_)-1.5;
+    l.control_points_[9].y = -1.0f*glm::cos(timer_);
+    l.control_points_[0].z = -.5f*glm::cos(timer_)-1.5f;
 
     l.UpdateLine();
     l_2.UpdateLine();

@@ -6,7 +6,7 @@
 #include "scene_manager.hpp"
 
 #include "scenes/shader_scene.hpp"
-#include "scenes/ball_scene.hpp"
+#include <scenes/ball_scene.hpp>
 #include "scenes/bezier_scene.hpp"
 #include "scenes/instance_test.hpp"
 
@@ -58,7 +58,7 @@ void init(SDL_Window *&window, SDL_GLContext &context)
 
 int main(int argc, char *argv[])
 {
-    Engine* engine = new Engine;
+    gl00::Engine* engine = new gl00::Engine;
 
     SDL_Window *window = NULL;
     SDL_GLContext context;

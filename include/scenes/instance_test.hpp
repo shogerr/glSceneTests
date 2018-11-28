@@ -9,7 +9,7 @@ public:
     virtual void DoFrame();
     virtual void OnStartGraphics();
 private:
-    Model* scene_model_;
+    gl00::Model* scene_model_;
 
     Shader* shader_;
 

@@ -1,4 +1,4 @@
-#include "scene.hpp"
+#include <scene.hpp>
 
 Scene::~Scene() {}
 void Scene::OnStartGraphics() {}

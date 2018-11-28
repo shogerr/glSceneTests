@@ -1,23 +1,28 @@
 #include "mesh.hpp"
 
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, unsigned int num_instances)
+gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, unsigned int num_instances)
 {
     vertices_ = vertices;
     indices_ = indices;
     textures_ = textures;
 
     num_instances_ = num_instances;
-    identity_ = glm::mat4(1.0);
-    model_ = &identity_;
+    model_ = new glm::mat4(1.0);
     SetupMesh();
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures) :
+gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures) :
     Mesh(vertices, indices, textures, 1)
 {}
 
-void Mesh::Draw(Shader* shader)
+gl00::Mesh::~Mesh()
+{
+    std::vector<gl00::Mesh::Texture>().swap(textures_);
+    std::vector<Vertex>().swap(vertices_);
+}
+
+void gl00::Mesh::Draw(Shader* shader)
 {
     for (GLuint i = 0; i < textures_.size(); i++)
     {
@@ -34,7 +39,7 @@ void Mesh::Draw(Shader* shader)
     glDrawElementsInstanced(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0, num_instances_);
 }
 
-void Mesh::UpdateModel(glm::mat4* model)
+void gl00::Mesh::UpdateModel(glm::mat4* model)
 {
     // TODO: put into loop to update all instances
     model_ = model;
@@ -51,7 +56,7 @@ void Mesh::UpdateModel(glm::mat4* model)
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
-void Mesh::SetupMesh()
+void gl00::Mesh::SetupMesh()
 {
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);

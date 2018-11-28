@@ -1,37 +1,42 @@
-#include "model.hpp"
+#include <model.hpp>
 #include <assimp/postprocess.h>
 #include <SOIL2/SOIL2.h>
 #include <fstream>
 
-Model::Model(std::string path) :
+gl00::Model::Model(std::string path) :
     Model(path, 1)
 {}
 
-Model::Model(std::string path, unsigned int instance_count)
+gl00::Model::Model(std::string path, unsigned int instance_count)
 {
     instance_count_ = instance_count;
     LoadModel(path);
 
-    identity_ = glm::mat4(1.0);
-    model_ = &identity_;
+    model_ = new glm::mat4(1.0);
 }
 
-void Model::Draw(Shader* shader)
+gl00::Model::~Model()
+{
+    CleanUp(&model_);
+    // TODO: attempting to clear textures adds even more overhead. Why?
+    std::vector<gl00::Mesh::Texture>().swap(loaded_textures_);
+}
+
+void gl00::Model::Draw(Shader* shader)
 {
     for (auto m : meshes_)
     {
         m.UpdateModel(model_);
         m.Draw(shader);
     }
-
 }
 
-void Model::UpdateModel(glm::mat4* model)
+void gl00::Model::UpdateModel(glm::mat4* model)
 {
     model_ = model;
 }
 
-void Model::LoadModel(std::string& path)
+void gl00::Model::LoadModel(std::string& path)
 {
     Assimp::Importer importer;
 
@@ -61,7 +66,7 @@ void Model::LoadModel(std::string& path)
     ProcessNode(scene->mRootNode, scene);
 }
 
-void Model::ProcessNode(aiNode * node, const aiScene * scene)
+void gl00::Model::ProcessNode(aiNode * node, const aiScene * scene)
 {
     LOGI("Processing node\n");
     for (GLuint i = 0; i < node->mNumMeshes; i++)
@@ -74,15 +79,15 @@ void Model::ProcessNode(aiNode * node, const aiScene * scene)
         ProcessNode(node->mChildren[i], scene);
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
-    std::vector<Mesh::Vertex> vertices;
+    std::vector<gl00::Mesh::Vertex> vertices;
     std::vector<GLuint> indices;
-    std::vector<Mesh::Texture> textures;
+    std::vector<gl00::Mesh::Texture> textures;
 
     for (GLuint i = 0; i < mesh->mNumVertices; i++)
     {
-        Mesh::Vertex vertex;
+        gl00::Mesh::Vertex vertex;
         vertex.position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.0f);
         vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 
@@ -112,20 +117,20 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<Mesh::Texture> diffuse_maps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<gl00::Mesh::Texture> diffuse_maps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuse_maps.begin(), diffuse_maps.end());
 
-        std::vector<Mesh::Texture> specular_maps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<gl00::Mesh::Texture> specular_maps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
         LOGI("Found materials:\nTextures: %d\nSpecularMaps: %d\n", diffuse_maps.size(), specular_maps.size());
     }
 
-    return Mesh(vertices, indices, textures, instance_count_);
+    return gl00::Mesh(vertices, indices, textures, instance_count_);
 }
 
-std::vector<Mesh::Texture> Model::LoadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
+std::vector<gl00::Mesh::Texture> gl00::Model::LoadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
 {
-    std::vector<Mesh::Texture> textures;
+    std::vector<gl00::Mesh::Texture> textures;
 
     bool skip = false;
 
@@ -147,7 +152,7 @@ std::vector<Mesh::Texture> Model::LoadMaterialTextures(aiMaterial* material, aiT
 
         if (!skip)
         {
-            Mesh::Texture texture;
+            gl00::Mesh::Texture texture;
             texture.id = TextureFromFile(str.C_Str(), model_directory_);
             texture.type = type_name;
             texture.path = str;

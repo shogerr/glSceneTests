@@ -1,5 +1,6 @@
-#include "scene_manager.hpp"
-#include "scene.hpp"
+#include <scene_manager.hpp>
+#include <scene.hpp>
+#include <common.hpp>
 
 static SceneManager g_scene_manager;
 

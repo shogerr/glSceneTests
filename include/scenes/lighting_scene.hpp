@@ -112,13 +112,13 @@ public:
     
     void Poke(unsigned short e)
     {
-        light_state_ ^= 1 << e;
+        light_state_ ^= 1ULL << e;
     }
 
 private:
-    Model* scene_model_;
-    Model* sphere_model_;
-    Model* light_model_;
+    gl00::Model* scene_model_;
+    gl00::Model* sphere_model_;
+    gl00::Model* light_model_;
 
     GLuint color_bo_;
     glm::vec3 colors[3] = { {1.0,1.0,1.0}, {1.0,0.0,0.0}, {1.0,1.0,0.0} };

@@ -1,4 +1,4 @@
-#include "instance_test.hpp"
+#include <scenes/instance_test.hpp>
 
 #define INSTANCE_COUNT 3
 
@@ -10,7 +10,7 @@ void InstanceTest::OnStartGraphics()
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/light.fs.glsl"} };
     shader_ = new Shader(light_shaders);
 
-    scene_model_ = new Model("../src/test/light_object.obj", INSTANCE_COUNT);
+    scene_model_ = new gl00::Model("../src/test/light_object.obj", INSTANCE_COUNT);
 
     SceneManager* mgr = SceneManager::GetInstance();
 

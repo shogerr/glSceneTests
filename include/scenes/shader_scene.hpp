@@ -68,11 +68,11 @@ public:
 
     virtual void Poke(unsigned int e)
     {
-        animation_state_ ^= 1 << e;
+        animation_state_ ^= 1ULL << e;
     }
 private:
     Shader* shader_;
-    Model* scene_model_;
+    gl00::Model* scene_model_;
 
     glm::mat4 projection_, view_;
     glm::vec3 view_position_;

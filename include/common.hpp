@@ -1,9 +1,9 @@
 #ifndef __COMMON_HPP
 #define __COMMON_HPP
 
-#if defined(_WIN32)
+//#if defined(_WIN32)
 #include <windows.h>
-#endif
+//#endif
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -13,6 +13,8 @@
 #define GLM_FORCE_RADIANS
 
 #include <stdio.h>
+
+#define EPSILON 0.1
 
 #define LOGE(...) ( printf(__VA_ARGS__) )
 #define LOGI(...) ( printf(__VA_ARGS__) )
@@ -24,6 +26,14 @@ template<typename T> void CleanUp(T** pptr) {
         delete *pptr;
         *pptr = NULL;
     }
+}
+
+template<typename T> bool Comparef(T a, T b)
+{
+    float c = a - b;
+    if (c < EPSILON && -c < EPSILON)
+        return true;
+    return false;
 }
 
 #endif //__COMMON_HPP

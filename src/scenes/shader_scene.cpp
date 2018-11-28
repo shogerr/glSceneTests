@@ -1,7 +1,5 @@
-#include "shader_scene.hpp"
+#include <scenes/shader_scene.hpp>
 #include <chrono>
-
-
 
 void
 ShaderScene::OnStartGraphics()
@@ -11,7 +9,7 @@ ShaderScene::OnStartGraphics()
 
     shader_ = new Shader(shaderFilenames);
 
-    scene_model_ = new Model("../src/test/cube_object.obj");
+    scene_model_ = new gl00::Model("../src/test/cube_object.obj");
 
     SceneManager* mgr = SceneManager::GetInstance();
 

@@ -1,7 +1,7 @@
 #ifndef __BEZIER_SCENE
 #define __BEZIER_SCENE
 
-#include "../engine_parts.hpp"
+#include "engine_parts.hpp"
 #include <vector>
 #include <bitset>
 
@@ -14,7 +14,7 @@ public:
     virtual void DoFrame();
     virtual void Poke(unsigned int e)
     {
-        animation_state_ ^= 1 << e;
+        animation_state_ ^= 1ULL << e;
     }
 private:
     GLuint linebo_;
