@@ -1,6 +1,6 @@
-#include "../model.hpp"
+#include <model.hpp>
 
 void main()
 {
-    Model m("../src/test/test_model.obj");
+    gl00::Model m("../src/test/test_model.obj");
 }

@@ -2,7 +2,7 @@
 #include "scene_manager.hpp"
 #include "engine.hpp"
 
-#include "scenes/shader_scene.hpp"
+#include "scenes/ball_scene.hpp"
 
 static gl00::Engine* g_engine = NULL;
 
@@ -37,11 +37,11 @@ gl00::Engine* gl00::Engine::GetInstance()
 
 void gl00::Engine::SetScreenDimensions(int width, int height)
 {
-    if (mWindowWidth != width || mWindowHeight != height)
+    if (window_width_ != width || window_height_ != height)
     {
         SceneManager* mgr = SceneManager::GetInstance();
-        mWindowWidth = width;
-        mWindowHeight = height;
+        window_width_ = width;
+        window_height_ = height;
         mgr->SetScreenSize(width, height);
     }
 }
@@ -70,13 +70,13 @@ void gl00::Engine::KillGlObjects()
     LOGD("Engine: Context killed.");
 }
 
-bool gl00::Engine::preRender()
+bool gl00::Engine::PreRender()
 {
     do
     {
         if (!has_globjects_)
         {
-           if (!initGLObjects())
+           if (!InitGLObjects())
                 return false;
         }
     } while (0);
@@ -87,14 +87,14 @@ bool gl00::Engine::preRender()
 
 void gl00::Engine::DoFrame()
 {
-    if (!preRender())
+    if (!PreRender())
         return;
 
     SceneManager* mgr = SceneManager::GetInstance();
     if (first_frame_)
     {
         first_frame_ = false;
-        mgr->RequestNewScene(new ShaderScene());
+        mgr->RequestNewScene(new BallScene());
     }
 
     mgr->DoFrame();
@@ -106,7 +106,7 @@ void gl00::Engine::DoFrame()
     }
 }
 
-bool gl00::Engine::initGLObjects()
+bool gl00::Engine::InitGLObjects()
 {
     if (!has_globjects_)
     {

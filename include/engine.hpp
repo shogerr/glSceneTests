@@ -15,13 +15,14 @@ namespace gl00
 
         void SetScreenDimensions(int width, int height);
     private:
-        bool preRender();
-        bool initGLObjects();
         bool first_frame_;
         bool has_globjects_;
 
-        int mWindowHeight;
-        int mWindowWidth;
+        int window_height_;
+        int window_width_;
+
+        bool PreRender();
+        bool InitGLObjects();
 
         void ConfigureOpenGL();
         void KillContext();

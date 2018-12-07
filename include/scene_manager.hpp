@@ -32,6 +32,6 @@ private:
     Scene* scene_to_install_;
     bool has_graphics_;
 
-    void InstallScene(Scene* scene);
+    void InstallScene(Scene* new_scene);
 };
 #endif // __SCENE_MANAGER_HPP

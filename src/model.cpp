@@ -12,6 +12,7 @@ gl00::Model::Model(std::string path, unsigned int instance_count)
     instance_count_ = instance_count;
     LoadModel(path);
 
+    LOGI("Loaded model\n");
     model_ = new glm::mat4(1.0);
 }
 
@@ -19,7 +20,7 @@ gl00::Model::~Model()
 {
     CleanUp(&model_);
     // TODO: attempting to clear textures adds even more overhead. Why?
-    std::vector<gl00::Mesh::Texture>().swap(loaded_textures_);
+    //std::vector<gl00::Mesh::Texture>().swap(loaded_textures_);
 }
 
 void gl00::Model::Draw(Shader* shader)
@@ -34,6 +35,16 @@ void gl00::Model::Draw(Shader* shader)
 void gl00::Model::UpdateModel(glm::mat4* model)
 {
     model_ = model;
+}
+
+void gl00::Model::SetInstanceCount(unsigned int instance_count)
+{
+    instance_count_ = instance_count;
+    for (auto &m : meshes_)
+    {
+        m.instance_count_ = instance_count_;
+    }
+
 }
 
 void gl00::Model::LoadModel(std::string& path)
@@ -101,7 +112,7 @@ gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vertices.push_back(vertex);
     }
     
-    printf("num faces:%d\n", mesh->mNumFaces);
+    printf("Number of faces: %d\n", mesh->mNumFaces);
     // Setup indices
     for (GLuint i = 0; i < mesh->mNumFaces; i++)
     {
@@ -168,7 +179,7 @@ std::vector<gl00::Mesh::Texture> gl00::Model::LoadMaterialTextures(aiMaterial* m
 GLuint TextureFromFile(const char* path, std::string directory)
 {
     std::string filename = directory + '/' + std::string(path);
-    //std::string filename = "./" + std::string(path);
+
     GLuint texture_id = 0;
     int width, height;
     
@@ -183,7 +194,7 @@ GLuint TextureFromFile(const char* path, std::string directory)
 
     glGenTextures(1, &texture_id);
 
-    LOGI("filename: %s\n", filename.c_str());
+    LOGI("Filename: %s\n", filename.c_str());
 
     unsigned char* image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 

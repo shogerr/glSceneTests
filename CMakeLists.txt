@@ -35,7 +35,7 @@ add_executable(renderer ${TEST_SOURCE} ${HEADERS})
 
 # Create test target
 add_executable(test_model "src/test/test_model.cpp" "src/model.cpp" "src/mesh.cpp" "include/model.hpp")
-add_executable(test_scene_object "test/test_scene_object.cpp" "src/scene_object.cpp")
+add_executable(test_scene_object "test/test_scene_object.cpp" ${SOURCE})
 
 #message (${CMAKE_CURRENT_LIST_DIR})
 
@@ -71,7 +71,8 @@ find_library(SOIL2 SOIL2 "${CMAKE_CURRENT_SOURCE_DIR}\\libraries\\SOIL2\\lib\\wi
 # Set targets links
 target_link_libraries(gl00 assimp ${SOIL2} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})
 target_link_libraries(renderer assimp ${SDL2_LIBRARY} ${SOIL2} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})
-target_link_libraries(test_model assimp)
+target_link_libraries(test_model assimp ${OPENGL_LIBRARIES} ${SOIL2} ${GLEW_LIBRARY})
+target_link_libraries(test_scene_object assimp ${SDL2_LIBRARY} ${SOIL2} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} )
 
 install(TARGETS renderer gl00 DESTINATION bin)
 

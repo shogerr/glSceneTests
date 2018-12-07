@@ -180,3 +180,9 @@ void BezierScene::DoFrame()
 
     lastframe_ns_ = now;
 }
+
+void BezierScene::OnKillGraphics()
+{
+    CleanUp(&control_shader_);
+    CleanUp(&line_shader_);
+}

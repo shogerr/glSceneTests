@@ -18,5 +18,13 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sdl/sdl_helper.cpp
+	PARENT_SCOPE
+)
+
+set(HEADERS
+	${HEADERS}
+	${CMAKE_CURRENT_SOURCE_DIR}/sdl/sdl_helper.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/lighting.hpp
 	PARENT_SCOPE
 )

@@ -7,4 +7,6 @@ libraries/
 build/
 testbuild/
 
+bin/
+
 *.zip

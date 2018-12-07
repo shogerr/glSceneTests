@@ -1,7 +1,7 @@
 #ifndef __SHADER_HPP
 #define __SHADER_HPP 
 
-#include "common.hpp"
+#include <common.hpp>
 #include <string>
 #include <vector>
 

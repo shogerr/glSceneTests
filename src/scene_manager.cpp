@@ -20,9 +20,9 @@ SceneManager* SceneManager::GetInstance()
     return &g_scene_manager;
 }
 
-void SceneManager::RequestNewScene(Scene *newScene)
+void SceneManager::RequestNewScene(Scene *scene)
 {
-    scene_to_install_ = newScene;
+    scene_to_install_ = scene;
 } 
 
 Scene* SceneManager::GetScene()
@@ -30,7 +30,7 @@ Scene* SceneManager::GetScene()
     return current_scene_;
 }
 
-void SceneManager::InstallScene(Scene* newScene)
+void SceneManager::InstallScene(Scene* new_scene)
 {
     bool had_graphics = has_graphics_;
     if (has_graphics_)
@@ -43,7 +43,7 @@ void SceneManager::InstallScene(Scene* newScene)
         current_scene_ = NULL;
     }
 
-    current_scene_ = newScene;
+    current_scene_ = new_scene;
     if (current_scene_)
         current_scene_->OnInstall();
 

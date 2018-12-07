@@ -1,5 +1,4 @@
-#include "mesh.hpp"
-
+#include <mesh.hpp>
 
 gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, unsigned int num_instances)
 {
@@ -7,7 +6,7 @@ gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std:
     indices_ = indices;
     textures_ = textures;
 
-    num_instances_ = num_instances;
+    instance_count_ = num_instances;
     model_ = new glm::mat4(1.0);
     SetupMesh();
 }
@@ -18,8 +17,7 @@ gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std:
 
 gl00::Mesh::~Mesh()
 {
-    std::vector<gl00::Mesh::Texture>().swap(textures_);
-    std::vector<Vertex>().swap(vertices_);
+    //CleanUp(&model_);
 }
 
 void gl00::Mesh::Draw(Shader* shader)
@@ -36,20 +34,18 @@ void gl00::Mesh::Draw(Shader* shader)
         glBindTexture(GL_TEXTURE_2D, textures_[i].id);
     }
     glBindVertexArray(vao_);
-    glDrawElementsInstanced(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0, num_instances_);
+    glDrawElementsInstanced(GL_TRIANGLES, indices_.size(), GL_UNSIGNED_INT, 0, instance_count_);
 }
 
 void gl00::Mesh::UpdateModel(glm::mat4* model)
 {
-    // TODO: put into loop to update all instances
     model_ = model;
 
     glBindBuffer(GL_ARRAY_BUFFER, model_bo_);
-    glm::mat4* mesh_model_mat = (glm::mat4*)glMapBufferRange(GL_ARRAY_BUFFER, 0, num_instances_ * sizeof(glm::mat4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+    glm::mat4* mesh_model_mat = (glm::mat4*)glMapBufferRange(GL_ARRAY_BUFFER, 0, instance_count_ * sizeof(glm::mat4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-    for (unsigned int i = 0; i < num_instances_; i++)
+    for (unsigned int i = 0; i < instance_count_; i++)
     {
-        //LOGI("model 3x: %f\n", model[i][3].x);
         mesh_model_mat[i] = model[i];
     }
 
@@ -66,10 +62,10 @@ void gl00::Mesh::SetupMesh()
     glBindVertexArray(vao_);
 
     glBindBuffer(GL_ARRAY_BUFFER, model_bo_);
-    glBufferData(GL_ARRAY_BUFFER, num_instances_ * sizeof(glm::mat4), glm::value_ptr(*model_), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, instance_count_ * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex), &vertices_[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex), &vertices_[0], GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_[0], GL_STATIC_DRAW);

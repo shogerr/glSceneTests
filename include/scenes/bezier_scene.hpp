@@ -12,6 +12,7 @@ class BezierScene : public Scene
 public:
     virtual void OnStartGraphics();
     virtual void DoFrame();
+    virtual void OnKillGraphics();
     virtual void Poke(unsigned int e)
     {
         animation_state_ ^= 1ULL << e;

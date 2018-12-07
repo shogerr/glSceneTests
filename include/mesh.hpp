@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <string>
+
+#include <assimp/types.h>
+
 #include <common.hpp>
-#include <assimp\types.h>
 #include <shader.hpp>
 
 namespace gl00
@@ -36,12 +38,12 @@ namespace gl00
 
         GLuint vao_;
 
+        unsigned int instance_count_;
     private:
         std::vector<Vertex> vertices_;
         std::vector<GLuint> indices_;
         std::vector<Mesh::Texture> textures_;
 
-        unsigned int num_instances_;
 
         GLuint vbo_, ebo_;
         GLuint model_bo_;

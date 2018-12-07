@@ -1,5 +1,4 @@
-#include <iostream>
-#include <SDL.h>
+#include "../sdl/sdl_helper.hpp"
 
 #include "common.hpp"
 #include "engine.hpp"
@@ -13,49 +12,6 @@
 constexpr auto WIDTH = 768;
 constexpr auto HEIGHT = 768;
 
-void checkSDLError(int line = -1)
-{
-    const char *error = SDL_GetError();
-    if (*error != '\0')
-    {
-        SDL_Log("SDL Error: %s\n", error);
-        if (line != -1)
-            SDL_Log("SDL Error: %i\n", line);
-        SDL_ClearError();
-    }
-}
-
-void init(SDL_Window *&window, SDL_GLContext &context)
-{
-    SDL_GLContext context_;
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        SDL_Log("%s:\n", SDL_GetError());
-        SDL_Quit();
-        exit(1);
-    }
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-
-    window = SDL_CreateWindow("test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
-    if (!window) {
-        SDL_Log("%s:\n", SDL_GetError());
-        SDL_Quit();
-        exit(1);
-    }
-
-    context_ = SDL_GL_CreateContext(window);
-    glewExperimental = GL_TRUE;
-    GLenum glewError = glewInit();
-
-    if (glewError != GLEW_OK)
-        std::cout << "Error initializing GLEW. " << glewGetErrorString(glewError);
-
-    context = context_;
-    checkSDLError(__LINE__);
-}
-
-
 int main(int argc, char *argv[])
 {
     gl00::Engine* engine = new gl00::Engine;
@@ -63,7 +19,7 @@ int main(int argc, char *argv[])
     SDL_Window *window = NULL;
     SDL_GLContext context;
     
-    init(window, context);
+    gl00::_SDL_Init(window, context, WIDTH, HEIGHT);
 
     SDL_Log("%s\n", glGetString(GL_VENDOR));
     SDL_Log("%s\n", glGetString(GL_VERSION));
@@ -74,20 +30,24 @@ int main(int argc, char *argv[])
     glClear(GL_COLOR_BUFFER_BIT);
 
     int width, height = 0;
-    int mouse_x, mouse_y;
 
     SceneManager* mgr = SceneManager::GetInstance();
     SDL_Event e;
 
     for (;;)
     {
-        if (SDL_PollEvent(&e))
+        SDL_GetWindowSize(window, &width, &height);
+        engine->SetScreenDimensions(width, height);
+
+        if (!mgr->GetScene())
+            goto draw;
+
+        while (SDL_PollEvent(&e))
         {
             switch (e.type)
             {
             case SDL_MOUSEMOTION:
-                SDL_GetMouseState(&mouse_x, &mouse_y);
-                mgr->UpdateMouseMotion((float)mouse_x/width, (float)mouse_y/height);
+                mgr->UpdateMouseMotion((float)e.motion.x/width, (float)e.motion.y/height);
                 break;
             case SDL_KEYDOWN:
                 switch (e.key.keysym.sym)
@@ -107,20 +67,38 @@ int main(int argc, char *argv[])
                 case SDLK_0:
                     mgr->Poke(0);
                     break;
-                case SDLK_2:
+                case SDLK_1:
                     mgr->Poke(1);
                     break;
-                case SDLK_3:
+                case SDLK_2:
                     mgr->Poke(2);
                     break;
-                case SDLK_4:
+                case SDLK_3:
                     mgr->Poke(3);
                     break;
-                case SDLK_5:
+                case SDLK_4:
                     mgr->Poke(4);
                     break;
-                case SDLK_6:
+                case SDLK_5:
                     mgr->Poke(5);
+                    break;
+                case SDLK_6:
+                    mgr->Poke(6);
+                    break;
+                case SDLK_w:
+                    mgr->Poke(SDLK_w);
+                    break;
+                case SDLK_s:
+                    mgr->Poke(SDLK_s);
+                    break;
+                case SDLK_a:
+                    mgr->Poke(SDLK_a);
+                    break;
+                case SDLK_d:
+                    mgr->Poke(SDLK_d);
+                    break;
+                case SDLK_b:
+                    mgr->Poke(SDLK_b);
                     break;
                 }
                 break;
@@ -129,9 +107,7 @@ int main(int argc, char *argv[])
             }
         }
         
-        SDL_GetWindowSize(window, &width, &height);
-        engine->SetScreenDimensions(width, height);
-
+draw:
         engine->DoFrame();
         SDL_GL_SwapWindow(window);
     }

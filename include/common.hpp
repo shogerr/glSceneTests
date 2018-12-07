@@ -6,7 +6,7 @@
 //#endif
 
 #include <GL/glew.h>
-#include <GL/gl.h>
+#include <GL/GL.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-#define EPSILON 0.1
+#define EPSILON 0.0000001f
 
 #define LOGE(...) ( printf(__VA_ARGS__) )
 #define LOGI(...) ( printf(__VA_ARGS__) )
