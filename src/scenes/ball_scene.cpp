@@ -1,4 +1,4 @@
-#include <scenes/ball_scene.hpp>
+#include "ball_scene.hpp"
 #include <chrono>
 #include "../key_codes.hpp"
 
@@ -9,8 +9,8 @@ void BallScene::OnStartGraphics()
 
     std::vector<std::pair <GLenum, std::string >> light_shader_filenames = { {GL_VERTEX_SHADER, "../src/shaders/light.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/light.fs.glsl"} };
-    shader_ = new Shader(shaderFilenames);
-    light_shader_ = new Shader(light_shader_filenames);
+    shader_ = new gl00::Shader(shaderFilenames);
+    light_shader_ = new gl00::Shader(light_shader_filenames);
 
     camera_pos_ = glm::vec3(.5f, 2.0f, -7.0f);
     camera_focus_ = glm::vec3(0.f, 1.f, 0.f);
@@ -21,11 +21,15 @@ void BallScene::OnStartGraphics()
     obstacle_model_ = new gl00::Model{ "../src/test/amanita_a.obj", 2000 };
     light_model_ = new gl00::Model("../src/test/sphere_object.obj", 2);
 
+    p_scene_model_ = new glm::mat4(1.0f);
+
+    scene_model_->UpdateModel(p_scene_model_);
+
     obstacle_model_->SetInstanceCount(obstacles_.size());
 
     p_obstacle_model = new glm::mat4[obstacles_.size()];
 
-    for (int i = 0; i < obstacles_.size(); i++)
+    for (unsigned int i = 0; i < obstacles_.size(); i++)
     {
         p_obstacle_model[i] = glm::translate(glm::mat4(1.f), obstacles_[i].state_.position);
     }
@@ -56,7 +60,7 @@ void BallScene::OnStartGraphics()
     point_lights_.back().position = {9.f, 2.0f, 2.5f};
 
     p_light_model_ = new glm::mat4[point_lights_.size()];
-    for (int i = 0; i < point_lights_.size(); i++)
+    for (unsigned int i = 0; i < point_lights_.size(); i++)
     {
         glm::mat4 m = glm::translate(glm::mat4(1.f), point_lights_[i].position);
         p_light_model_[i] = glm::scale(m, glm::vec3(.25f));
@@ -87,8 +91,8 @@ void BallScene::OnKillGraphics()
 
 void BallScene::DoFrame()
 {
-    glClearColor(0.3, 0.3, 0.3, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+    //glClear(GL_COLOR_BUFFER_BIT);
     uint64_t now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
     float dt = float(now - lastframe_) * 0.000000001f;
     Step();
@@ -116,27 +120,29 @@ void BallScene::DoFrame()
 
     glm::vec3 obstacle_force = ObstacleForce();
 
-    solver->force_.z = -1.f * (solver->state_.position.z - target_.z) - 1.f*solver->state_.velocity.z + 5.f*obstacle_force.z;
-    solver->force_.x = -1.f * (solver->state_.position.x - target_.x) - 1.f*solver->state_.velocity.x + 5.f*obstacle_force.x;
+    solver->force_.z = -1.f * (solver->state_.position.z - target_.z) - 1.f*solver->state_.velocity.z;// +5.f*obstacle_force.z;
+    solver->force_.x = -1.f * (solver->state_.position.x - target_.x) - 1.f*solver->state_.velocity.x;// +5.f*obstacle_force.x;
 
     //LOGI("Obstacle force: %f, %f, %f\n", obstacle_force.x, obstacle_force.y, obstacle_force.z);
 
-    glm::mat4 t = glm::scale(glm::mat4(1.f), glm::vec3(1.f));
-    t = glm::translate(t, figure_->Position());
+    *p_scene_model_ = glm::scale(glm::mat4(1.0), glm::vec3(1.0));
+    *p_scene_model_ = glm::translate(*p_scene_model_, figure_->Position());
 
     //LOGI("Position: %f, %f, %f\n", figure_->Position().x, figure_->Position().y, figure_->Position().z);
-    t = glm::rotate(t, glm::radians(33.0f), glm::vec3(0, 1, 0));
+    //*p_scene_model_ = glm::rotate(*p_scene_model_, glm::radians(33.0f), glm::vec3(0, 1, 0));
 
-    figure_->t_->UpdateModel(&t);
+    //figure_->t_->UpdateModel(p_scene_model_);
+
     figure_->t_->Draw(shader_);
     ground_plane_->Draw(shader_);
 
-    for (int i = 0; i < obstacles_.size(); i++)
+    for (unsigned int i = 0; i < obstacles_.size(); i++)
     {
         p_obstacle_model[i] = glm::translate(glm::mat4(1.f), obstacles_[i].state_.position + glm::vec3(0.f,-.5f,0.f));
     }
     //LOGI("Obstacle #1 Position: %f, %f, %f\n", obstacle_solvers_[0].state_.position.x, obstacle_solvers_[0].state_.position.y, obstacle_solvers_[0].state_.position.z);
 
+    //obstacle_model_->UpdateModel(p_obstacle_model);
     obstacle_model_->Draw(shader_);
     glUseProgram(light_shader_->program_);
     glProgramUniformMatrix4fv(light_shader_->program_, 0, 1, GL_FALSE, glm::value_ptr(camera_.view_));
@@ -160,7 +166,7 @@ void BallScene::SpawnObstacle()
         p_obstacle_model[i] = glm::translate(glm::mat4(1.f), obstacles_[i].state_.position);
         i++;
     }
-    LOGD("Obstacle count: %d\n", obstacles_.size());
+    //LOGD("Obstacle count: %d\n", obstacles_.size());
     obstacle_model_->SetInstanceCount(obstacles_.size());
     obstacle_model_->UpdateModel(p_obstacle_model);
 }

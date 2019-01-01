@@ -2,7 +2,7 @@
 #define __LIGHTING_SCENE_HPP
 
 #include <bitset>
-#include "../engine_parts.hpp"
+#include <gl00/engine_parts.hpp>
 
 class Lighting
 {
@@ -104,7 +104,7 @@ public:
 };
 
 
-class LightingScene : public Scene
+class LightingScene : public gl00::Scene
 {
 public:
     virtual void DoFrame();
@@ -123,7 +123,7 @@ private:
     GLuint color_bo_;
     glm::vec3 colors[3] = { {1.0,1.0,1.0}, {1.0,0.0,0.0}, {1.0,1.0,0.0} };
 
-    std::vector<Shader*> shaders_;
+    std::vector<gl00::Shader*> shaders_;
 
     glm::vec3 view_position_;
     glm::mat4 projection_;

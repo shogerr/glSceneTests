@@ -1,5 +1,5 @@
+#include <gl00/common.hpp>
 #include "sdl_helper.hpp"
-#include "common.hpp"
 
 void gl00::_SDL_CheckError(int line)
 {

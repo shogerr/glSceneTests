@@ -1,6 +1,13 @@
 GL00
 ======
 
+# Required
+
+ - OpenGL
+ - SDL2 - `SDL2_ROOT`
+ - GLEW
+ - Assimp - `assimp_ROOT`
+
 # Building
 
 Use cmake to create your build solution. 

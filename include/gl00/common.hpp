@@ -1,9 +1,11 @@
 #ifndef __COMMON_HPP
 #define __COMMON_HPP
 
-//#if defined(_WIN32)
+#if defined(_WIN32)
 #include <windows.h>
-//#endif
+#endif
+
+#include <chrono>
 
 #include <GL/glew.h>
 #include <GL/GL.h>
@@ -30,10 +32,16 @@ template<typename T> void CleanUp(T** pptr) {
 
 template<typename T> bool Comparef(T a, T b)
 {
-    float c = a - b;
+    T c = a - b;
     if (c < EPSILON && -c < EPSILON)
         return true;
     return false;
 }
 
+/*
+inline uint64_t TimeNs()
+{
+    return std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
+}
+*/
 #endif //__COMMON_HPP

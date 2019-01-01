@@ -1,4 +1,4 @@
-#include <scenes/texture_scene.hpp>
+#include "texture_scene.hpp"
 #include <chrono>
 #include <random>
 
@@ -24,12 +24,12 @@ void TextureScene::OnStartGraphics()
 
     last_frame_ns_ = 0;
 
-    sphere_model_ = new ModelSingle("../src/test/face_textured.obj");
+    sphere_model_ = new gl00::Model("../src/test/face_textured.obj");
 
     std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/texture_vertex.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/texture_fragment.glsl"} };
 
-    shader_ = new Shader(shaderFilenames);
+    shader_ = new gl00::Shader(shaderFilenames);
 
 
     glGenTextures(1, &emptytex_);
@@ -40,7 +40,7 @@ void TextureScene::OnStartGraphics()
     glBindTexture(GL_TEXTURE_2D, emptytex_);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, &image[0]);
 
-    scenetex_ = ModelSingle::TextureFromFile("eyes.jpg", "../src/test");
+    scenetex_ = gl00::TextureFromFile("eyes.jpg", "../src/test");
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
@@ -116,7 +116,7 @@ void TextureScene::DoFrame()
         break;
     case 2:
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, sphere_model_->meshes_[0].textures_[0].id);
+        glBindTexture(GL_TEXTURE_2D, sphere_model_->meshes_[0].GetTextures()[0].id);
         break;
     case 4:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -131,5 +131,5 @@ void TextureScene::DoFrame()
     }
 
     glBindVertexArray(sphere_model_->meshes_[0].vao_);
-    glDrawElements(GL_TRIANGLES, sphere_model_->meshes_[0].indices_.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, sphere_model_->meshes_[0].IndicesCount(), GL_UNSIGNED_INT, 0);
 }

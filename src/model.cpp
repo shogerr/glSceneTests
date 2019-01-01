@@ -1,4 +1,4 @@
-#include <model.hpp>
+#include <gl00/model.hpp>
 #include <assimp/postprocess.h>
 #include <SOIL2/SOIL2.h>
 #include <fstream>
@@ -14,13 +14,12 @@ gl00::Model::Model(std::string path, unsigned int instance_count)
 
     LOGI("Loaded model\n");
     model_ = new glm::mat4(1.0);
+    updated_model_ = false;
 }
 
 gl00::Model::~Model()
 {
     CleanUp(&model_);
-    // TODO: attempting to clear textures adds even more overhead. Why?
-    //std::vector<gl00::Mesh::Texture>().swap(loaded_textures_);
 }
 
 void gl00::Model::Draw(Shader* shader)
@@ -34,6 +33,12 @@ void gl00::Model::Draw(Shader* shader)
 
 void gl00::Model::UpdateModel(glm::mat4* model)
 {
+    if (!updated_model_)
+    {
+        delete model_;
+        updated_model_ = true;
+    }
+
     model_ = model;
 }
 
@@ -176,7 +181,7 @@ std::vector<gl00::Mesh::Texture> gl00::Model::LoadMaterialTextures(aiMaterial* m
     return textures;
 }
 
-GLuint TextureFromFile(const char* path, std::string directory)
+GLuint gl00::TextureFromFile(const char* path, std::string directory)
 {
     std::string filename = directory + '/' + std::string(path);
 

@@ -1,4 +1,4 @@
-#include <scenes/bezier_scene.hpp>
+#include "bezier_scene.hpp"
 #include <chrono>
 
 void BezierScene::OnStartGraphics()
@@ -6,12 +6,12 @@ void BezierScene::OnStartGraphics()
     std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/bezier.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/bezier.fs.glsl"} };
 
-    line_shader_ = new Shader(shaderFilenames);
+    line_shader_ = new gl00::Shader(shaderFilenames);
 
     std::vector<std::pair <GLenum, std::string >> control_shader_filenames = { {GL_VERTEX_SHADER, "../src/shaders/bezier-point.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/bezier-point.fs.glsl"} };
 
-    control_shader_ = new Shader(control_shader_filenames);
+    control_shader_ = new gl00::Shader(control_shader_filenames);
 
     timer_ = 0;
     rot_timer_ = timer_;
@@ -19,7 +19,7 @@ void BezierScene::OnStartGraphics()
 
     view_ = glm::lookAt(glm::vec3(0.0,0.0,1.0), glm::vec3(0.0), glm::vec3(0, 1, 0));
 
-    SceneManager* mgr = SceneManager::GetInstance();
+    gl00::SceneManager* mgr = gl00::SceneManager::GetInstance();
     //projection_ = glm::perspective(glm::radians(45.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
     projection_ = glm::ortho(-256.0f, 256.0f, -256.0f, 256.0f, -350.0f, 350.0f);
 

@@ -6,8 +6,8 @@
 
 #include <assimp/types.h>
 
-#include <common.hpp>
-#include <shader.hpp>
+#include <gl00/common.hpp>
+#include <gl00/shader.hpp>
 
 namespace gl00
 {
@@ -30,11 +30,13 @@ namespace gl00
 
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, unsigned int num_instances);
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
+        ~Mesh();
 
         void Draw(Shader* shader);
         void UpdateModel(glm::mat4* model);
 
-        ~Mesh();
+        std::vector<Mesh::Texture> GetTextures();
+        int IndicesCount();
 
         GLuint vao_;
 
@@ -47,8 +49,6 @@ namespace gl00
 
         GLuint vbo_, ebo_;
         GLuint model_bo_;
-
-        glm::mat4* model_;
 
         virtual void SetupMesh();
     };

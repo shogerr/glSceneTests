@@ -1,4 +1,4 @@
-#include <scenes/shader_scene.hpp>
+#include "shader_scene.hpp"
 #include <chrono>
 
 void
@@ -7,11 +7,11 @@ ShaderScene::OnStartGraphics()
     std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/shader_scene.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/shader_scene.fs.glsl"} };
 
-    shader_ = new Shader(shaderFilenames);
+    shader_ = new gl00::Shader(shaderFilenames);
 
     scene_model_ = new gl00::Model("../src/test/cube_object.obj");
 
-    SceneManager* mgr = SceneManager::GetInstance();
+    gl00::SceneManager* mgr = gl00::SceneManager::GetInstance();
 
     projection_ = glm::perspective(glm::radians(65.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
 

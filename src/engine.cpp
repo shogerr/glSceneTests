@@ -1,8 +1,8 @@
-#include "common.hpp"
-#include "scene_manager.hpp"
-#include "engine.hpp"
+#include <gl00/common.hpp>
+#include <gl00/scene_manager.hpp>
+#include <gl00/engine.hpp>
 
-#include "scenes/ball_scene.hpp"
+#include "scenes/instance_test.hpp"
 
 static gl00::Engine* g_engine = NULL;
 
@@ -94,7 +94,7 @@ void gl00::Engine::DoFrame()
     if (first_frame_)
     {
         first_frame_ = false;
-        mgr->RequestNewScene(new BallScene());
+        mgr->RequestNewScene(new InstanceTest);
     }
 
     mgr->DoFrame();

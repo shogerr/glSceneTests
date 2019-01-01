@@ -1,13 +1,13 @@
+#include <gl00/common.hpp>
+#include <gl00/engine.hpp>
+#include <gl00/scene_manager.hpp>
+
 #include "../sdl/sdl_helper.hpp"
 
-#include "common.hpp"
-#include "engine.hpp"
-#include "scene_manager.hpp"
-
-#include "scenes/shader_scene.hpp"
-#include <scenes/ball_scene.hpp>
-#include "scenes/bezier_scene.hpp"
-#include "scenes/instance_test.hpp"
+#include "../scenes/shader_scene.hpp"
+#include "../scenes/ball_scene.hpp"
+#include "../scenes/bezier_scene.hpp"
+#include "../scenes/instance_test.hpp"
 
 constexpr auto WIDTH = 768;
 constexpr auto HEIGHT = 768;
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     int width, height = 0;
 
-    SceneManager* mgr = SceneManager::GetInstance();
+    gl00::SceneManager* mgr = gl00::SceneManager::GetInstance();
     SDL_Event e;
 
     for (;;)

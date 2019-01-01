@@ -1,4 +1,4 @@
-#include "camera.hpp"
+#include <gl00/camera.hpp>
 
 gl00::Camera::Camera() :
     projection_(glm::perspective(glm::radians(65.0f),1.0f,0.01f,100.0f)),

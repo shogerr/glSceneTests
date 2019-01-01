@@ -1,24 +1,14 @@
 set(HEADERS
 	${HEADERS}
-	${CMAKE_CURRENT_SOURCE_DIR}/common.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/engine.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/engine_parts.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene_object.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/model.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/model_single.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/shader.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/camera.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/common.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/engine.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/engine_parts.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/scene_object.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/scene_manager.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/model.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/mesh.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/shader.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gl00/camera.hpp
 	PARENT_SCOPE
 )

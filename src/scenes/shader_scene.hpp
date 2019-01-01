@@ -1,4 +1,4 @@
-#include "../engine_parts.hpp"
+#include <gl00/engine_parts.hpp>
 #include <bitset>
 
 class Lighting
@@ -59,7 +59,7 @@ public:
     }
 };
 
-class ShaderScene : public Scene
+class ShaderScene : public gl00::Scene
 {
 public:
     virtual void OnStartGraphics();
@@ -71,7 +71,7 @@ public:
         animation_state_ ^= 1ULL << e;
     }
 private:
-    Shader* shader_;
+    gl00::Shader* shader_;
     gl00::Model* scene_model_;
 
     glm::mat4 projection_, view_;

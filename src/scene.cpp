@@ -1,12 +1,12 @@
-#include <scene.hpp>
+#include <gl00/scene.hpp>
 
-Scene::~Scene() {}
-void Scene::OnStartGraphics() {}
-void Scene::OnKillGraphics() {}
-void Scene::OnScreenResize(int width, int height) {}
-void Scene::DoFrame() {}
-void Scene::OnInstall() {}
-void Scene::OnUnInstall() {}
-void Scene::OnMouseMotion(float x, float y) {}
-void Scene::OnJoy(float x, float y) {}
-void Scene::Poke(unsigned int) {}
+gl00::Scene::~Scene() {}
+void gl00::Scene::OnStartGraphics() {}
+void gl00::Scene::OnKillGraphics() {}
+void gl00::Scene::OnScreenResize(int width, int height) {}
+void gl00::Scene::DoFrame() {}
+void gl00::Scene::OnInstall() {}
+void gl00::Scene::OnUnInstall() {}
+void gl00::Scene::OnMouseMotion(float x, float y) {}
+void gl00::Scene::OnJoy(float x, float y) {}
+void gl00::Scene::Poke(unsigned int) {}

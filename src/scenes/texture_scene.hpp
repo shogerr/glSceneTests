@@ -1,5 +1,5 @@
-#include "../engine_parts.hpp"
-#include "../model_single.hpp"
+#include <gl00/engine_parts.hpp>
+#include <gl00/model.hpp>
 
 typedef struct particle {
     glm::vec3 s;
@@ -8,7 +8,7 @@ typedef struct particle {
     float e;
 } Particle;
 
-class TextureScene : public Scene
+class TextureScene : public gl00::Scene
 {
 public:
     virtual void OnStartGraphics();
@@ -20,8 +20,8 @@ public:
 
 private:
     uint64_t last_frame_ns_;
-    ModelSingle* sphere_model_;
-    Shader* shader_;
+    gl00::Model* sphere_model_;
+    gl00::Shader* shader_;
 
     GLuint emptytex_;
     GLuint scenetex_;

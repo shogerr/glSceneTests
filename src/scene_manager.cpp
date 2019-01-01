@@ -1,13 +1,12 @@
-#include <scene_manager.hpp>
-#include <scene.hpp>
-#include <common.hpp>
+#include <gl00/scene_manager.hpp>
+#include <gl00/scene.hpp>
 
-static SceneManager g_scene_manager;
+static gl00::SceneManager g_scene_manager;
 
-SceneManager::SceneManager()
+gl00::SceneManager::SceneManager()
 {
-    current_scene_ = NULL;
-    scene_to_install_ = NULL;
+    current_scene_ = std::nullptr_t{};
+    scene_to_install_ = std::nullptr_t{};
 
     screen_width_ = 512;
     screen_height_ = 512;
@@ -15,22 +14,22 @@ SceneManager::SceneManager()
     has_graphics_ = false;
 }
 
-SceneManager* SceneManager::GetInstance()
+gl00::SceneManager* gl00::SceneManager::GetInstance()
 {
     return &g_scene_manager;
 }
 
-void SceneManager::RequestNewScene(Scene *scene)
+void gl00::SceneManager::RequestNewScene(gl00::Scene *scene)
 {
     scene_to_install_ = scene;
 } 
 
-Scene* SceneManager::GetScene()
+gl00::Scene* gl00::SceneManager::GetScene()
 {
     return current_scene_;
 }
 
-void SceneManager::InstallScene(Scene* new_scene)
+void gl00::SceneManager::InstallScene(gl00::Scene* new_scene)
 {
     bool had_graphics = has_graphics_;
     if (has_graphics_)
@@ -40,7 +39,7 @@ void SceneManager::InstallScene(Scene* new_scene)
     {
         current_scene_->OnUnInstall();
         delete current_scene_;
-        current_scene_ = NULL;
+        current_scene_ = std::nullptr_t{};
     }
 
     current_scene_ = new_scene;
@@ -51,23 +50,18 @@ void SceneManager::InstallScene(Scene* new_scene)
         StartGraphics();
 }
 
-void SceneManager::StartGraphics()
+void gl00::SceneManager::StartGraphics()
 {
     if (!has_graphics_)
     {
-        LOGI("SceneManager: starting graphics.\n");
         has_graphics_ = true;
         if (current_scene_)
-        {
-            LOGI("Calling OnStartGraphics()\n");
             current_scene_->OnStartGraphics();
-        }
     }
 }
 
-void SceneManager::KillGraphics() {
+void gl00::SceneManager::KillGraphics() {
     if (has_graphics_) {
-        LOGI("SceneManager: killing graphics.\n");
         has_graphics_ = false;
         if (current_scene_) {
             current_scene_->OnKillGraphics();
@@ -75,22 +69,22 @@ void SceneManager::KillGraphics() {
     }
 }
 
-void SceneManager::Poke(unsigned int i)
+void gl00::SceneManager::Poke(unsigned int i)
 {
     current_scene_->Poke(i);
 }
 
-void SceneManager::UpdateMouseMotion(float x, float y)
+void gl00::SceneManager::UpdateMouseMotion(float x, float y)
 {
     current_scene_->OnMouseMotion(x, y);
 }
 
-void SceneManager::UpdateJoy(float x, float y)
+void gl00::SceneManager::UpdateJoy(float x, float y)
 {
     current_scene_->OnJoy(x, y);
 }
 
-void SceneManager::SetScreenSize(int width, int height)
+void gl00::SceneManager::SetScreenSize(int width, int height)
 {
     if (screen_width_ != width || screen_height_ != height)
     {
@@ -102,18 +96,17 @@ void SceneManager::SetScreenSize(int width, int height)
     }
 }
 
-float SceneManager::GetScreenAspect()
+float gl00::SceneManager::GetScreenAspect()
 {
     return screen_width_ / (float)screen_height_;
 }
 
-void SceneManager::DoFrame()
+void gl00::SceneManager::DoFrame()
 {
     if (scene_to_install_)
     {
-        LOGI("Scene to install.\n");
         InstallScene(scene_to_install_);
-        scene_to_install_ = NULL;
+        scene_to_install_ = std::nullptr_t{};
     }
 
     if (has_graphics_ && current_scene_)

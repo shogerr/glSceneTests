@@ -1,28 +1,28 @@
-#include "shader.hpp"
+#include <gl00/shader.hpp>
 
 #include <fstream>
 
-Shader::Shader()
+gl00::Shader::Shader()
 {
 }
 
-Shader::Shader(std::vector<std::pair<GLenum, std::string>> shaderFilenames)
+gl00::Shader::Shader(std::vector<std::pair<GLenum, std::string>> shaderFilenames)
 {
     std::string shaderSource;
     for (auto &s : shaderFilenames)
     {
-        shaderSource = loadShader(s.second);
+        shaderSource = LoadShader(s.second);
         s.second = shaderSource;
     }
 
-    program_ = createProgram(&shaderFilenames);
+    program_ = CreateProgram(&shaderFilenames);
 }
 
-Shader::~Shader()
+gl00::Shader::~Shader()
 {
 }
 
-bool checkGlError(const char* functionName)
+bool gl00::CheckGlError(const char* function_name)
 {
     GLint err = glGetError();
 
@@ -33,7 +33,7 @@ bool checkGlError(const char* functionName)
     return false;
 }
 
-static const void _printProgramLog(GLuint program)
+static const void gl00::_PrintProgramLog(GLuint program)
 {
     if (glIsProgram(program)) {
         int infoLogLength = 0;
@@ -57,7 +57,7 @@ static const void _printProgramLog(GLuint program)
     }
 }
 
-static const void _printShaderLog(GLuint shader)
+static const void gl00::_PrintShaderLog(GLuint shader)
 {
     if (glIsShader(shader)) {
         int infoLogLength = 0;
@@ -80,7 +80,7 @@ static const void _printShaderLog(GLuint shader)
     }
 }
 
-std::string Shader::loadShader(const std::string& fileName) {
+std::string gl00::Shader::LoadShader(const std::string& fileName) {
     std::ifstream file;
     file.open((fileName).c_str());
 
@@ -102,13 +102,13 @@ std::string Shader::loadShader(const std::string& fileName) {
     return output;
 }
 
-GLuint Shader::createProgram(std::vector<std::pair<GLenum, std::string>>* shaderSources) {
+GLuint gl00::Shader::CreateProgram(std::vector<std::pair<GLenum, std::string>>* shaderSources) {
     GLuint program = 0;
     std::vector<GLuint> shaders;
     GLint linked = GL_FALSE;
 
     for (auto s : *shaderSources) {
-        shaders.push_back(compileShader(s.second.c_str(), s.first));
+        shaders.push_back(CompileShader(s.second.c_str(), s.first));
         //if (shaders.back())
         //    goto exit;
     }
@@ -118,7 +118,7 @@ GLuint Shader::createProgram(std::vector<std::pair<GLenum, std::string>>* shader
     program = glCreateProgram();
     if (!program) {
         LOGI("no program");
-        checkGlError("glCreateProgram");
+        CheckGlError("glCreateProgram");
         goto exit;
     }
 
@@ -130,7 +130,7 @@ GLuint Shader::createProgram(std::vector<std::pair<GLenum, std::string>>* shader
 
     if (linked == GL_FALSE)
     {
-        _printProgramLog(program);
+        gl00::_PrintProgramLog(program);
         program = 0;
     }
 
@@ -140,7 +140,7 @@ exit:
     return program;
 }
 
-GLuint Shader::compileShader(const std::string& text, GLenum shaderType)
+GLuint gl00::Shader::CompileShader(const std::string& text, GLenum shaderType)
 {
     GLint shaderCompiled = GL_FALSE;
 
@@ -149,7 +149,7 @@ GLuint Shader::compileShader(const std::string& text, GLenum shaderType)
 
     if (!shader)
     {
-        checkGlError("glCreateShader");
+        gl00::CheckGlError("glCreateShader");
         return 0;
     }
 
@@ -162,7 +162,7 @@ GLuint Shader::compileShader(const std::string& text, GLenum shaderType)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderCompiled);
 
     if (shaderCompiled == GL_FALSE) {
-        _printShaderLog(shader);
+        gl00::_PrintShaderLog(shader);
     }
 
     return shader;

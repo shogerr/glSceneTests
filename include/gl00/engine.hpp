@@ -2,7 +2,7 @@
 #define __ENGINE_HPP
 
 #include "common.hpp"
-#include <glm/ext.hpp>
+
 namespace gl00
 {
     class Engine {

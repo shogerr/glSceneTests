@@ -1,0 +1,1 @@
+#include <gl00/scene_object.hpp>

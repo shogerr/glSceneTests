@@ -1,4 +1,16 @@
-#include <scene_object.hpp>
+#include "state_solver.hpp"
+
+gl00::StateSolver::StateSolver() : force_(glm::vec3(0.0f))
+{
+    state_.position = glm::vec3(0.0f);
+    state_.velocity = glm::vec3(0.0f);
+}
+
+gl00::StateSolver::StateSolver(glm::vec3 position) : force_(glm::vec3(0.0f))
+{
+    state_.position = position;
+    state_.velocity = glm::vec3(0.0f);
+}
 
 void gl00::StateSolver::CalcDerivative(const State & state, Derivative & derivative)
 {
@@ -22,5 +34,3 @@ void gl00::StateSolver::Simulate(float dt)
     state_.position += vavg * dt;
     state_.velocity += aavg * dt;
 }
-
-

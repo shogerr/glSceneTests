@@ -1,4 +1,4 @@
-#include <mesh.hpp>
+#include <gl00/mesh.hpp>
 
 gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, unsigned int num_instances)
 {
@@ -7,7 +7,6 @@ gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std:
     textures_ = textures;
 
     instance_count_ = num_instances;
-    model_ = new glm::mat4(1.0);
     SetupMesh();
 }
 
@@ -16,11 +15,19 @@ gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std:
 {}
 
 gl00::Mesh::~Mesh()
+{}
+
+std::vector<gl00::Mesh::Texture> gl00::Mesh::GetTextures()
 {
-    //CleanUp(&model_);
+    return textures_;
 }
 
-void gl00::Mesh::Draw(Shader* shader)
+int gl00::Mesh::IndicesCount()
+{
+    return indices_.size();
+}
+
+void gl00::Mesh::Draw(gl00::Shader* shader)
 {
     for (GLuint i = 0; i < textures_.size(); i++)
     {
@@ -39,8 +46,6 @@ void gl00::Mesh::Draw(Shader* shader)
 
 void gl00::Mesh::UpdateModel(glm::mat4* model)
 {
-    model_ = model;
-
     glBindBuffer(GL_ARRAY_BUFFER, model_bo_);
     glm::mat4* mesh_model_mat = (glm::mat4*)glMapBufferRange(GL_ARRAY_BUFFER, 0, instance_count_ * sizeof(glm::mat4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 

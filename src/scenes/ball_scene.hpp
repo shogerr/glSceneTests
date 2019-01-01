@@ -1,12 +1,12 @@
 #ifndef __BALL_SCENE_HPP
 #define __BALL_SCENE_HPP
 
-#include <engine_parts.hpp>
-#include <scene_object.hpp>
-#include <camera.hpp>
-#include "../../src/gizmos/lighting.hpp"
+#include <gl00/engine_parts.hpp>
+#include <gl00/scene_object.hpp>
+#include <gl00/camera.hpp>
+#include "../gizmos/lighting.hpp"
 
-class BallScene : public Scene
+class BallScene : public gl00::Scene
 {
 public:
     virtual void OnStartGraphics();
@@ -18,8 +18,8 @@ public:
     virtual void Poke(unsigned int i);
 
 private:
-    Shader* shader_;
-    Shader* light_shader_;
+    gl00::Shader* shader_;
+    gl00::Shader* light_shader_;
     gl00::Camera camera_;
     glm::vec3 camera_pos_;
     glm::vec3 camera_focus_;
@@ -29,12 +29,9 @@ private:
 
     glm::vec2 cursor_pos_ = { 0.f, 0.f };
 
-    //gl00::SceneObject<gl00::Model*>* points_;
-
     const float gravity_ = -9.8f;
 
     glm::vec3 target_;
-    //std::vector<glm::vec3> obstacles_;
 
     gl00::Model* scene_model_;
     gl00::Model* obstacle_model_;
@@ -42,6 +39,7 @@ private:
 
     glm::mat4* p_obstacle_model;
     glm::mat4* p_light_model_;
+    glm::mat4* p_scene_model_;
     
     gl00::SceneObject<gl00::Model*>* figure_;
     std::vector<gl00::StateSolver> obstacles_;

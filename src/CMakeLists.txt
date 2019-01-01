@@ -2,15 +2,13 @@ set(SOURCE
 	${SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/engine.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scene_object.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/model_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/mesh_instance.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/camera.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/scene_object.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/state_solver.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/camera.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.cpp
@@ -18,7 +16,6 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sdl/sdl_helper.cpp
 	PARENT_SCOPE
 )
 
@@ -26,5 +23,13 @@ set(HEADERS
 	${HEADERS}
 	${CMAKE_CURRENT_SOURCE_DIR}/sdl/sdl_helper.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/lighting.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/state_solver.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.hpp
 	PARENT_SCOPE
 )

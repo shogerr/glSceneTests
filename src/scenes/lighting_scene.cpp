@@ -1,4 +1,4 @@
-#include <scenes/lighting_scene.hpp>
+#include "lighting_scene.hpp"
 #include <chrono>
 
 
@@ -10,8 +10,8 @@ void LightingScene::OnStartGraphics()
 
     std::vector<std::pair <GLenum, std::string>> light_shaders = { {GL_VERTEX_SHADER, "../src/shaders/light.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/light.fs.glsl"} };
-    shaders_.push_back(new Shader(object_shaders));
-    shaders_.push_back(new Shader(light_shaders));
+    shaders_.push_back(new gl00::Shader(object_shaders));
+    shaders_.push_back(new gl00::Shader(light_shaders));
 
     scene_model_ = new gl00::Model("../src/test/b_sphere2.obj");
     sphere_model_ = new gl00::Model("../src/test/two_spheres.obj");
@@ -21,7 +21,7 @@ void LightingScene::OnStartGraphics()
 
     LOGI("number of meshes: %d\n", scene_model_->meshes_.size());
 
-    SceneManager* mgr = SceneManager::GetInstance();
+    gl00::SceneManager* mgr = gl00::SceneManager::GetInstance();
     
     projection_ = glm::perspective(glm::radians(65.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
 

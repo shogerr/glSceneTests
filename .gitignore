@@ -5,8 +5,9 @@
 libraries/
 
 build/
-testbuild/
+build*/
 
 bin/
 
 *.zip
+*.exe

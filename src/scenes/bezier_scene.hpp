@@ -1,13 +1,13 @@
 #ifndef __BEZIER_SCENE
 #define __BEZIER_SCENE
 
-#include "engine_parts.hpp"
+#include <gl00/engine_parts.hpp>
 #include <vector>
 #include <bitset>
 
 class Line;
 
-class BezierScene : public Scene
+class BezierScene : public gl00::Scene
 {
 public:
     virtual void OnStartGraphics();
@@ -21,8 +21,8 @@ private:
     GLuint linebo_;
     GLuint colorbo_;
 
-    Shader* control_shader_;
-    Shader* line_shader_;
+    gl00::Shader* control_shader_;
+    gl00::Shader* line_shader_;
 
     glm::mat4 projection_, view_;
 
@@ -86,7 +86,7 @@ public:
 
     }
 
-    void DrawControlPoints(Shader* shader)
+    void DrawControlPoints(gl00::Shader* shader)
     {
 
     }

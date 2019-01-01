@@ -5,14 +5,15 @@
 #include <vector>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <mesh.hpp>
+#include <gl00/mesh.hpp>
  
-GLuint TextureFromFile(const char* path, std::string directory);
-
-class Shader;
 
 namespace gl00
 {
+    GLuint TextureFromFile(const char* path, std::string directory);
+
+    class Shader;
+
     class Model
     {
     public:
@@ -34,6 +35,7 @@ namespace gl00
         std::string model_directory_;
 
         unsigned int instance_count_;
+        bool updated_model_;
 
         // Model matrix applied to all meshes held by model.
         glm::mat4* model_;
