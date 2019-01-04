@@ -7,8 +7,10 @@
 
 #include <chrono>
 
-#include <GL/glew.h>
-#include <GL/GL.h>
+//#include <GL/glew.h>
+//#include <GL/GL.h>
+
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 

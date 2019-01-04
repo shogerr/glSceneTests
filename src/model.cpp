@@ -1,6 +1,6 @@
 #include <gl00/model.hpp>
 #include <assimp/postprocess.h>
-#include <SOIL2/SOIL2.h>
+#include <SOIL2.h>
 #include <fstream>
 
 gl00::Model::Model(std::string path) :

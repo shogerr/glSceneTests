@@ -5,14 +5,12 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 if(WIN32)
-	set(ASSIMP_ROOT_DIR CACHE PATH "ASSIMP root directory")
-
 	# Find path of each library
 	find_path(assimp_INCLUDE_DIR
 		NAMES
 			assimp/anim.h
 		HINTS
-			${ASSIMP_ROOT_DIR}/include
+			${assimp_ROOT}/include
 	)
 
 	if(MSVC12)
@@ -42,8 +40,10 @@ if(WIN32)
 	
 		FUNCTION(ASSIMP_COPY_BINARIES TargetDirectory)
 			ADD_CUSTOM_TARGET(AssimpCopyBinaries
-				COMMAND ${CMAKE_COMMAND} -E copy ${assimp_ROOT_DIR}/bin${ASSIMP_ARCHITECTURE}/assimp-${ASSIMP_MSVC_VERSION}-mtd.dll 	${TargetDirectory}/Debug/assimp-${ASSIMP_MSVC_VERSION}-mtd.dll
-				COMMAND ${CMAKE_COMMAND} -E copy ${assimp_ROOT_DIR}/bin${ASSIMP_ARCHITECTURE}/assimp-${ASSIMP_MSVC_VERSION}-mt.dll 		${TargetDirectory}/Release/assimp-${ASSIMP_MSVC_VERSION}-mt.dll
+				COMMAND ${CMAKE_COMMAND} -E copy ${assimp_ROOT}/bin/assimp-${assimp_MSVC_VERSION}-mtd.dll
+					${TargetDirectory}/Debug/assimp-${assimp_MSVC_VERSION}-mtd.dll
+				COMMAND ${CMAKE_COMMAND} -E copy ${assimp_ROOT}/bin/assimp-${assimp_MSVC_VERSION}-mt.dll
+					${TargetDirectory}/Release/assimp-${assimp_MSVC_VERSION}-mt.dll
 			COMMENT "Copying Assimp binaries to '${TargetDirectory}'"
 			VERBATIM)
 		ENDFUNCTION(ASSIMP_COPY_BINARIES)

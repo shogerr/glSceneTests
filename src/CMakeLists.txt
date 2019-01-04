@@ -1,5 +1,6 @@
 set(SOURCE
 	${SOURCE}
+	${CMAKE_CURRENT_SOURCE_DIR}/glad.c
 	${CMAKE_CURRENT_SOURCE_DIR}/engine.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp

@@ -1,9 +1,9 @@
 #include "../src/sdl/sdl_helper.hpp"
-#include <engine.hpp>
-#include <scene_manager.hpp>
-#include <scene_object.hpp>
+#include <gl00/engine.hpp>
+#include <gl00/scene_manager.hpp>
+#include <gl00/scene_object.hpp>
 #include "../src/scenes/instance_test.hpp"
-#include <model.hpp>
+#include <gl00/model.hpp>
 
 constexpr auto WIDTH = 512;
 constexpr auto HEIGHT = 512;

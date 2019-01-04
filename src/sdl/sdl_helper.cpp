@@ -33,11 +33,15 @@ void gl00::_SDL_Init(SDL_Window *&window, SDL_GLContext &context, int width, int
     }
 
     context_ = SDL_GL_CreateContext(window);
-    glewExperimental = GL_TRUE;
-    GLenum glewError = glewInit();
+    //glewExperimental = GL_TRUE;
+    //GLenum glewError = glewInit();
 
-    if (glewError != GLEW_OK)
-        LOGI("Error initializing GLEW.  %s\n", glewGetErrorString(glewError));
+    //if (glewError != GLEW_OK)
+    //    LOGI("Error initializing GLEW.  %s\n", glewGetErrorString(glewError));
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+    {
+        exit(1);
+    }
 
     context = context_;
     gl00::_SDL_CheckError(__LINE__);
