@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 3.12.1)
 cmake_minimum_required (VERSION 3.12.1 FATAL_ERROR)
 
-#cmake_policy(SET CMP0074 NEW)
-
 # Set project.
 project(renderer LANGUAGES CXX)
 
@@ -29,7 +27,7 @@ assign_source_group(${HEADERS})
 
 # Force the console in Windows.
 if(WIN32)
-	set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console")
+	set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
 endif(WIN32)
 
 add_library(gl00-shared
@@ -59,9 +57,9 @@ add_executable(renderer
 set_source_files_properties( src/glad.c PROPERTIES LANGUAGE CXX )
 
 # Create test target.
-add_executable(test_model "src/test/test_model.cpp" "src/model.cpp" "src/mesh.cpp" "include/gl00/model.hpp")
-add_executable(test_scene_object "tests/test_scene_object.cpp" ${SOURCE})
-add_executable(test_pointer "tests/test_pointer.cpp")
+add_executable(test_model "src/glad.c" "src/test/test_model.cpp" "src/model.cpp" "src/mesh.cpp" "include/gl00/model.hpp")
+add_executable(test_scene_object "tests/test_scene_object.cpp" "src/sdl/sdl_helper.cpp" ${SOURCE})
+add_executable(test_pointer "src/glad.c" "tests/test_pointer.cpp")
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -74,10 +72,11 @@ include_directories("${assimp_INCLUDE_DIR}")
 include_directories("${SOIL2_INCLUDE_DIR}")
 
 # Set targets links
-target_link_libraries(gl00-shared  ${SOIL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY})
-target_link_libraries(renderer ${assimp_LIBRARY} ${SDL2_LIBRARY} ${SOIL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY})
-target_link_libraries(test_model ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY} ${SOIL2_LIBRARY} ${GLEW_LIBRARY})
-target_link_libraries(test_scene_object ${assimp_LIBRARY} ${SDL2_LIBRARY} ${SOIL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_gl_LIBRARY})
+target_link_libraries(gl00-shared ${assimp_LIBRARY} ${SOIL2_LIBRARY} ${OPENGL_gl_LIBRARY})
+target_link_libraries(gl00-static ${assimp_LIBRARY} ${SOIL2_LIBRARY} ${OPENGL_gl_LIBRARY})
+target_link_libraries(renderer ${assimp_LIBRARY} ${SOIL2_LIBRARY} ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY} )
+target_link_libraries(test_model ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY} ${SOIL2_LIBRARY})
+target_link_libraries(test_scene_object ${assimp_LIBRARY} ${SOIL2_LIBRARY} ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY} )
 
 ASSIMP_COPY_BINARIES(${CMAKE_CURRENT_BINARY_DIR})
 

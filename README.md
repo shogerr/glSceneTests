@@ -1,14 +1,22 @@
 GL00
 ======
 
-# Required
+## Required
 
  - OpenGL
  - SDL2 - `SDL2_ROOT`
- - GLEW
  - Assimp - `assimp_ROOT`
 
-# Building
+### Windows
+
+Cmake 3.12 or greated is required to build this project. The following entries
+can be provided to cmake as either environment variables or through the command
+line to provide the installation paths for the libraries reqruired.
+
+ - SDL2 - `SDL2_ROOT`
+ - Assimp - `assimp_ROOT`
+
+## Building
 
 Use cmake to create your build solution. 
 
@@ -20,5 +28,4 @@ $ cd build
 $ cmake -G "Visual Studio 15 2017" ..
 ```
 
-Open the solution file and compile. Must have GLEW, SDL2 and OpenGL libraries
-available.
+Open the solution file and compile.
