@@ -1,7 +1,8 @@
 #include "model_single.hpp"
 #include <assimp/postprocess.h>
-#include <SOIL2/SOIL2.h>
 #include <fstream>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 ModelSingle::ModelSingle(std::string path)
 {
@@ -137,9 +138,9 @@ std::vector<MeshSingle::Texture> ModelSingle::loadMaterialTextures(aiMaterial* m
 GLuint ModelSingle::TextureFromFile(const char* path, std::string directory)
 {
     std::string filename = directory + '/' + std::string(path);
-    //std::string filename = "./" + std::string(path);
+
     GLuint texture_id = 0;
-    int width, height;
+    int width, height, pixel_bytes;
     
     std::ifstream fin(filename.c_str());
     if (!fin.fail())
@@ -154,7 +155,7 @@ GLuint ModelSingle::TextureFromFile(const char* path, std::string directory)
 
     LOGI("filename: %s\n", filename.c_str());
 
-    unsigned char* image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
+    unsigned char* image = stbi_load(filename.c_str(), &width, &height, &pixel_bytes, 4);
 
     glBindTexture(GL_TEXTURE_2D, texture_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
@@ -169,6 +170,6 @@ GLuint ModelSingle::TextureFromFile(const char* path, std::string directory)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     LOGI("image loaded: %s\n", filename.c_str());
-    SOIL_free_image_data(image);
+    stbi_image_free(image);
     return texture_id;
 }

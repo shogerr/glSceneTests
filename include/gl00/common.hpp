@@ -11,11 +11,12 @@
 //#include <GL/GL.h>
 
 #include <glad/glad.h>
+
+#define GLM_ENABLE_EXPIREMENTAL
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
 #define GLM_FORCE_RADIANS
-
 #include <stdio.h>
 
 #define EPSILON 0.0000001f
@@ -40,10 +41,8 @@ template<typename T> bool Comparef(T a, T b)
     return false;
 }
 
-/*
-inline uint64_t TimeNs()
+static uint64_t TimeNs()
 {
     return std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
 }
-*/
 #endif //__COMMON_HPP

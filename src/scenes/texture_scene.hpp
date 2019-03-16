@@ -1,16 +1,19 @@
+#ifndef __TEXTURE_SCENE_HPP
+#define __TEXTURE_SCENE_HPP
+
 #include <gl00/engine_parts.hpp>
 #include <gl00/model.hpp>
-
-typedef struct particle {
-    glm::vec3 s;
-    glm::vec3 v;
-
-    float e;
-} Particle;
 
 class TextureScene : public gl00::Scene
 {
 public:
+    typedef struct particle {
+        glm::vec3 s;
+        glm::vec3 v;
+
+        float e;
+    } Particle;
+
     virtual void OnStartGraphics();
     virtual void DoFrame();
 
@@ -36,3 +39,5 @@ private:
 
     void Step();
 };
+
+#endif __TEXTURE_SCENE_HPP

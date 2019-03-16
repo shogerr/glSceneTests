@@ -1,5 +1,7 @@
 *.swo
 *.swp
+
+.vs/
 .vscode/
 
 libraries/
@@ -11,3 +13,5 @@ bin/
 
 *.zip
 *.exe
+
+CMakeSettings.json

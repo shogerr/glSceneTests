@@ -53,7 +53,7 @@ ShaderScene::DoFrame()
 
     glProgramUniform2f(scene_program, 3, time_.x, time_.y);
 
-    Lighting::FillSpotLight(scene_program, 6, &g_spotlight);
+    gl00::Lighting::FillSpotLight(scene_program, 6, g_spotlight);
     scene_model_->Draw(shader_);
 
     lastframe_ = now;

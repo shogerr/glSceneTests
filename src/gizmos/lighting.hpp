@@ -1,3 +1,6 @@
+#ifndef __LIGHTING_HPP
+#define __LIGHTING_HPP
+
 #include <gl00/common.hpp>
 
 namespace gl00
@@ -60,3 +63,5 @@ namespace gl00
         }
     };
 }
+
+#endif

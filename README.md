@@ -7,6 +7,15 @@ GL00
  - SDL2 - `SDL2_ROOT`
  - Assimp - `assimp_ROOT`
 
+### Assimp
+
+When building the 'Debug' release for Assimp, configure the cmake project using
+`CMAKE_BUILD_TYPE`. This will suffix the assimp libraries build with a 'd'.
+
+```
+cmake -G "Visual Studio 15 2017 Win64" .. -DCMAKE_BUILD_TYPE=Debug
+```
+
 ### Windows
 
 Cmake 3.12 or greated is required to build this project. The following entries

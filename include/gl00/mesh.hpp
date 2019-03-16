@@ -36,7 +36,9 @@ namespace gl00
         void UpdateModel(glm::mat4* model);
 
         std::vector<Mesh::Texture> GetTextures();
+        GLuint Vbo() { return vbo_; };
         int IndicesCount();
+        int VertexCount() { return vertex_count_; };
 
         GLuint vao_;
 
@@ -46,6 +48,7 @@ namespace gl00
         std::vector<GLuint> indices_;
         std::vector<Mesh::Texture> textures_;
 
+        unsigned int vertex_count_;
 
         GLuint vbo_, ebo_;
         GLuint model_bo_;

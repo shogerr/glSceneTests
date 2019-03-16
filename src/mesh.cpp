@@ -3,6 +3,7 @@
 gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, unsigned int num_instances)
 {
     vertices_ = vertices;
+    vertex_count_ = vertices.size();
     indices_ = indices;
     textures_ = textures;
 
@@ -70,7 +71,7 @@ void gl00::Mesh::SetupMesh()
     glBufferData(GL_ARRAY_BUFFER, instance_count_ * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex), &vertices_[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count_ * sizeof(Vertex), &vertices_[0], GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_[0], GL_STATIC_DRAW);

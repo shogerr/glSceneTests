@@ -17,6 +17,7 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/scattering_scene.cpp
 	PARENT_SCOPE
 )
 
@@ -32,5 +33,6 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/scattering_scene.hpp
 	PARENT_SCOPE
 )

@@ -2,7 +2,8 @@
 #include <gl00/scene_manager.hpp>
 #include <gl00/engine.hpp>
 
-#include "scenes/instance_test.hpp"
+//#include "scenes/instance_test.hpp"
+#include "scenes/scattering_scene.hpp"
 
 static gl00::Engine* g_engine = NULL;
 
@@ -94,7 +95,7 @@ void gl00::Engine::DoFrame()
     if (first_frame_)
     {
         first_frame_ = false;
-        mgr->RequestNewScene(new InstanceTest);
+        mgr->RequestNewScene(new gl00::scenes::ScatteringScene);
     }
 
     mgr->DoFrame();

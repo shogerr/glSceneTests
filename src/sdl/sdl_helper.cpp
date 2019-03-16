@@ -25,6 +25,14 @@ void gl00::_SDL_Init(SDL_Window *&window, SDL_GLContext &context, int width, int
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 
+    /*
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
+    */
+
     window = SDL_CreateWindow("test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!window) {
         SDL_Log("%s:\n", SDL_GetError());
@@ -33,6 +41,9 @@ void gl00::_SDL_Init(SDL_Window *&window, SDL_GLContext &context, int width, int
     }
 
     context_ = SDL_GL_CreateContext(window);
+
+    // The old GLEW method.
+    //
     //glewExperimental = GL_TRUE;
     //GLenum glewError = glewInit();
 

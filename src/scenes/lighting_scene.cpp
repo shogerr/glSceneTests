@@ -122,10 +122,10 @@ void LightingScene::DoFrame()
         g_spotlight.t->direction = glm::vec3(0, -1, 0);
         g_spotlight.t->position = g_spotlight.pos_;
     }
-    Lighting::FillPointLight(scene_program, 6, g_pointlights[0].t);
-    Lighting::FillPointLight(scene_program, 13, g_pointlights[1].t);
+    gl00::Lighting::FillPointLight(scene_program, 6, *g_pointlights[0].t);
+    gl00::Lighting::FillPointLight(scene_program, 13, *g_pointlights[1].t);
 
-    Lighting::FillSpotLight(scene_program, 20, g_spotlight.t);
+    gl00::Lighting::FillSpotLight(scene_program, 20, *g_spotlight.t);
 
 
     scene_model_->Draw(shaders_.front());

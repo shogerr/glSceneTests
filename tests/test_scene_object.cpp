@@ -54,7 +54,7 @@ void RunSDL()
                 switch (e.key.keysym.sym)
                 {
                 case SDLK_F1:
-                    mgr->RequestNewScene(new InstanceTest);
+                    mgr->RequestNewScene(new gl00::scenes::InstanceTest);
                     break;
                 case SDLK_q:
                     SDL_Quit();

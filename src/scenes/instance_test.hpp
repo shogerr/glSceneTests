@@ -3,7 +3,12 @@
 
 #include <gl00/engine_parts.hpp>
 
-class InstanceTest : public gl00::Scene
+namespace gl00::scenes
+{
+    class InstanceTest;
+};
+
+class gl00::scenes::InstanceTest : public gl00::Scene
 {
 public:
     virtual void DoFrame();
@@ -24,8 +29,11 @@ private:
     uint64_t time_last_ns_;
 };
 
+/*
 inline uint64_t TimeNs()
 {
     return std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
 }
+*/
 #endif // !__INSTANCE_TEST_HPP
+

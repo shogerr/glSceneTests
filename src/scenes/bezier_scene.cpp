@@ -26,8 +26,8 @@ void BezierScene::OnStartGraphics()
     lastframe_ns_ = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
     glEnable(GL_PROGRAM_POINT_SIZE);
 
-    Line l = Line{};
-    LOGI("resolution: %d", l.resolution_);
+    gl00::Line l = gl00::Line{};
+    LOGI("resolution: %d", l.GetResolution());
 
     int d = 9;
     std::vector<glm::vec3> cp = {};
@@ -54,7 +54,7 @@ void BezierScene::OnStartGraphics()
     glBindBuffer(GL_ARRAY_BUFFER, linebo_);
     glBufferData(GL_ARRAY_BUFFER, count * sizeof(glm::mat4), &mvps[0], GL_DYNAMIC_DRAW);
 
-    glBindVertexArray(l.vao_);
+    glBindVertexArray(l.GetVAO());
 
     for (int i = 0; i < 4; i++)
     {
@@ -72,14 +72,14 @@ void BezierScene::OnStartGraphics()
 
     glGenBuffers(1, &colorbo_);
     glBindBuffer(GL_ARRAY_BUFFER, colorbo_);
-    glBufferData(GL_ARRAY_BUFFER, l.resolution_ * sizeof(glm::vec4), &colors[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, l.GetResolution() * sizeof(glm::vec4), &colors[0], GL_STATIC_DRAW);
 
     glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
     glEnableVertexAttribArray(5);
     //glVertexAttribDivisor(4, 1);
     glBindVertexArray(0);
 
-    l = Line{};
+    l = gl00::Line{};
     cp = {};
     d = 5;
     for (int i = d; i >= 0; i--)
@@ -91,7 +91,7 @@ void BezierScene::OnStartGraphics()
     l.control_points_ = cp;
     l.Setup();
     lines_.push_back(l);
-    glBindVertexArray(l.vao_);
+    glBindVertexArray(l.GetVAO());
 
     glBindBuffer(GL_ARRAY_BUFFER, linebo_);
     for (int i = 0; i < 4; i++)
@@ -129,8 +129,8 @@ void BezierScene::DoFrame()
         view_ = glm::lookAt(glm::vec3(glm::sin(.25*rot_timer_), 0.0, glm::cos(.25*rot_timer_)), glm::vec3(0.0), glm::vec3(0, 1, 0));
     }
 
-    Line l = lines_.at(0);
-    Line l_2 = lines_.at(1);
+    gl00::Line l = lines_.at(0);
+    gl00::Line l_2 = lines_.at(1);
 
     l.control_points_[2].y = glm::sin(timer_);
     l.control_points_[3].x = glm::sin(1.5f*timer_);
@@ -142,7 +142,7 @@ void BezierScene::DoFrame()
     l.UpdateLine();
     l_2.UpdateLine();
     glUseProgram(line_shader_->program_);
-    glBindVertexArray(l.vao_);
+    glBindVertexArray(l.GetVAO());
 
     glProgramUniformMatrix4fv(line_shader_->program_, 0, 1, GL_FALSE, glm::value_ptr(view_));
     glProgramUniformMatrix4fv(line_shader_->program_, 1, 1, GL_FALSE, glm::value_ptr(projection_));
@@ -150,11 +150,11 @@ void BezierScene::DoFrame()
     if (animation_state_[3])
         instance_count = 1;
 
-    glDrawArraysInstanced(GL_LINE_STRIP, 0, l.resolution_, instance_count);
+    glDrawArraysInstanced(GL_LINE_STRIP, 0, l.GetResolution(), instance_count);
 
-    glBindVertexArray(l_2.vao_);
+    glBindVertexArray(l_2.GetVAO());
 
-    glDrawArraysInstanced(GL_LINE_STRIP, 0, l_2.resolution_, instance_count);
+    glDrawArraysInstanced(GL_LINE_STRIP, 0, l_2.GetResolution(), instance_count);
 
     glUseProgram(control_shader_->program_);
 
@@ -165,17 +165,17 @@ void BezierScene::DoFrame()
         instance_count = 1;
     if (animation_state_[0])
     {
-        glBindVertexArray(l.vao_);
-        glDrawArraysInstanced(GL_POINTS, l.resolution_, l.control_points_.size(), instance_count);
-        glBindVertexArray(l_2.vao_);
-        glDrawArraysInstanced(GL_POINTS, l_2.resolution_, l_2.control_points_.size(), instance_count);
+        glBindVertexArray(l.GetVAO());
+        glDrawArraysInstanced(GL_POINTS, l.GetResolution(), static_cast<int>(l.control_points_.size()), instance_count);
+        glBindVertexArray(l_2.GetVAO());
+        glDrawArraysInstanced(GL_POINTS, l_2.GetResolution(), static_cast<int>(l_2.control_points_.size()), instance_count);
     }
     if (animation_state_[1])
     {
-        glBindVertexArray(l.vao_);
-        glDrawArraysInstanced(GL_LINE_STRIP, l.resolution_, l.control_points_.size(), instance_count);
-        glBindVertexArray(l_2.vao_);
-        glDrawArraysInstanced(GL_LINE_STRIP, l_2.resolution_, l_2.control_points_.size(), instance_count);
+        glBindVertexArray(l.GetVAO());
+        glDrawArraysInstanced(GL_LINE_STRIP, l.GetResolution(), static_cast<int>(l.control_points_.size()), instance_count);
+        glBindVertexArray(l_2.GetVAO());
+        glDrawArraysInstanced(GL_LINE_STRIP, l_2.GetResolution(), static_cast<int>(l_2.control_points_.size()), instance_count);
     }
 
     lastframe_ns_ = now;

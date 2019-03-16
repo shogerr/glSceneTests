@@ -1,6 +1,6 @@
 #include "instance_test.hpp"
 
-void InstanceTest::OnStartGraphics()
+void gl00::scenes::InstanceTest::OnStartGraphics()
 {
     std::vector<std::pair <GLenum, std::string>> light_shaders = { {GL_VERTEX_SHADER, "../src/shaders/test.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/test.fs.glsl"} };
@@ -36,13 +36,13 @@ void InstanceTest::OnStartGraphics()
     glDepthRange(0.0f, 1.0f);
 }
 
-void InstanceTest::OnKillGraphics()
+void gl00::scenes::InstanceTest::OnKillGraphics()
 {
     CleanUp(&shader_);
     CleanUp(&scene_model_);
 }
 
-void InstanceTest::DoFrame()
+void gl00::scenes::InstanceTest::DoFrame()
 {
     glClearColor(.5, .5, .5, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

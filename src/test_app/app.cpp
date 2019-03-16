@@ -8,6 +8,8 @@
 #include "../scenes/ball_scene.hpp"
 #include "../scenes/bezier_scene.hpp"
 #include "../scenes/instance_test.hpp"
+#include "../scenes/lighting_scene.hpp"
+#include "../scenes/scattering_scene.hpp"
 
 constexpr auto WIDTH = 768;
 constexpr auto HEIGHT = 768;
@@ -62,7 +64,13 @@ int main(int argc, char *argv[])
                     mgr->RequestNewScene(new BezierScene);
                     break;
                 case SDLK_F4:
-                    mgr->RequestNewScene(new InstanceTest);
+                    mgr->RequestNewScene(new gl00::scenes::InstanceTest);
+                    break;
+                case SDLK_F5:
+                    mgr->RequestNewScene(new LightingScene);
+                    break;
+                case SDLK_F6:
+                    mgr->RequestNewScene(new gl00::scenes::ScatteringScene);
                     break;
                 case SDLK_0:
                     mgr->Poke(0);

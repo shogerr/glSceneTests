@@ -1,7 +1,8 @@
 #include <gl00/model.hpp>
 #include <assimp/postprocess.h>
-#include <SOIL2.h>
 #include <fstream>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 
 gl00::Model::Model(std::string path) :
     Model(path, 1)
@@ -186,7 +187,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
     std::string filename = directory + '/' + std::string(path);
 
     GLuint texture_id = 0;
-    int width, height;
+    int width, height, pixel_bytes;
     
     std::ifstream fin(filename.c_str());
     if (!fin.fail())
@@ -201,7 +202,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
 
     LOGI("Filename: %s\n", filename.c_str());
 
-    unsigned char* image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
+    unsigned char* image = stbi_load(filename.c_str(), &width, &height, &pixel_bytes, 4);
 
     glBindTexture(GL_TEXTURE_2D, texture_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
@@ -216,6 +217,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     LOGI("image loaded: %s\n", filename.c_str());
-    SOIL_free_image_data(image);
+
+    stbi_image_free(image);
     return texture_id;
 }

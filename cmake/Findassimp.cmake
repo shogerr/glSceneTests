@@ -5,6 +5,9 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 if(WIN32)
+    # Replaced the following line with assimp_ROOT variable.
+    # These variables are not retained across visual studio instances.
+    #set(ASSIMP_ROOT_DIR CACHE PATH "ASSIMP root directory")
 	# Find path of each library
 	find_path(assimp_INCLUDE_DIR
 		NAMES
@@ -38,12 +41,14 @@ if(WIN32)
 		
 		set(ASSIMP_LIBRARIES "ASSIMP_LIBRARY_RELEASE" "ASSIMP_LIBRARY_DEBUG")
 	
+        # TODO: The use of assimp_ROOT causes problem with this copy task if it is run when assimp_ROOT
+        # is not defined.
 		FUNCTION(ASSIMP_COPY_BINARIES TargetDirectory)
 			ADD_CUSTOM_TARGET(AssimpCopyBinaries
 				COMMAND ${CMAKE_COMMAND} -E copy ${assimp_ROOT}/bin/assimp-${assimp_MSVC_VERSION}-mtd.dll
-					${TargetDirectory}/Debug/assimp-${assimp_MSVC_VERSION}-mtd.dll
+					${TargetDirectory}/assimp-${assimp_MSVC_VERSION}-mtd.dll
 				COMMAND ${CMAKE_COMMAND} -E copy ${assimp_ROOT}/bin/assimp-${assimp_MSVC_VERSION}-mt.dll
-					${TargetDirectory}/Release/assimp-${assimp_MSVC_VERSION}-mt.dll
+					${TargetDirectory}/assimp-${assimp_MSVC_VERSION}-mt.dll
 			COMMENT "Copying Assimp binaries to '${TargetDirectory}'"
 			VERBATIM)
 		ENDFUNCTION(ASSIMP_COPY_BINARIES)
