@@ -18,7 +18,9 @@ int main(int argc, char *argv[])
 {
     gl00::Engine* engine = new gl00::Engine;
 
-    SDL_Window *window = NULL;
+    std::unique_ptr<SDL_Window, void (*)(SDL_Window*)> window 
+        = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>(nullptr, SDL_DestroyWindow);
+
     SDL_GLContext context;
     
     gl00::_SDL_Init(window, context, WIDTH, HEIGHT);
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
 
     for (;;)
     {
-        SDL_GetWindowSize(window, &width, &height);
+        SDL_GetWindowSize(window.get(), &width, &height);
         engine->SetScreenDimensions(width, height);
 
         if (!mgr->GetScene())
@@ -61,7 +63,7 @@ int main(int argc, char *argv[])
                     mgr->RequestNewScene(new ShaderScene);
                     break;
                 case SDLK_F3:
-                    mgr->RequestNewScene(new BezierScene);
+                    mgr->RequestNewScene(new gl00::scenes::BezierScene);
                     break;
                 case SDLK_F4:
                     mgr->RequestNewScene(new gl00::scenes::InstanceTest);
@@ -117,12 +119,12 @@ int main(int argc, char *argv[])
         
 draw:
         engine->DoFrame();
-        SDL_GL_SwapWindow(window);
+        SDL_GL_SwapWindow(window.get());
     }
 
 exit:
     SDL_GL_DeleteContext(context);
-    SDL_DestroyWindow(window);
+    //SDL_DestroyWindow(window);
     SDL_Quit();
 
     return 0;

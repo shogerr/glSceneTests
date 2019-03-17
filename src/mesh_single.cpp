@@ -1,15 +1,12 @@
-#include "mesh_single.hpp"
+#include <gl00/mesh_single.hpp>
 
-MeshSingle::MeshSingle(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<MeshSingle::Texture> textures)
+MeshSingle::MeshSingle(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vector<MeshSingle::Texture>& textures)
 {
-    vertices_ = vertices;
-    indices_ = indices;
     textures_ = textures;
-
-    SetupMesh();
+    SetupMesh(vertices_, indices_);
 }
 
-void MeshSingle::SetupMesh()
+void MeshSingle::SetupMesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices)
 {
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
@@ -17,10 +14,10 @@ void MeshSingle::SetupMesh()
 
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex), &vertices_[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof(GLuint), &indices_[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
 
     // Set the vertex attribute pointers
     // Vertex Positions

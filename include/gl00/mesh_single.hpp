@@ -23,16 +23,14 @@ public:
         aiString path;
     };
 
-    MeshSingle(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
+    MeshSingle(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vector<Texture>& textures);
 
-    std::vector<Vertex> vertices_;
-    std::vector<GLuint> indices_;
     std::vector<MeshSingle::Texture> textures_;
 
     GLuint vao_, vbo_, ebo_;
 
 private:
-    virtual void SetupMesh();
+    virtual void SetupMesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices);
 
 };
 #endif // !__MESH_HPP

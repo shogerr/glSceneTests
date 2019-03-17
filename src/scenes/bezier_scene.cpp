@@ -1,7 +1,7 @@
 #include "bezier_scene.hpp"
 #include <chrono>
 
-void BezierScene::OnStartGraphics()
+void gl00::scenes::BezierScene::OnStartGraphics()
 {
     std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/bezier.vs.glsl"},
                                                                      {GL_FRAGMENT_SHADER, "../src/shaders/bezier.fs.glsl"} };
@@ -112,7 +112,7 @@ void BezierScene::OnStartGraphics()
     glDepthRange(0.0f, 1.0f);
 }
 
-void BezierScene::DoFrame()
+void gl00::scenes::BezierScene::DoFrame()
 {
     uint64_t now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
     float dt = float(now - lastframe_ns_) * 0.000000001f;
@@ -181,7 +181,7 @@ void BezierScene::DoFrame()
     lastframe_ns_ = now;
 }
 
-void BezierScene::OnKillGraphics()
+void gl00::scenes::BezierScene::OnKillGraphics()
 {
     CleanUp(&control_shader_);
     CleanUp(&line_shader_);

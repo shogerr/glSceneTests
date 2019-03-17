@@ -9,6 +9,7 @@ namespace gl00
     {
     public:
         SceneManager();
+        ~SceneManager() = default;
         void SetScreenSize(int width, int height);
         void KillGraphics();
         void StartGraphics();

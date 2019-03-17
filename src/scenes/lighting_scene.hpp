@@ -3,56 +3,8 @@
 
 #include <bitset>
 #include <gl00/engine_parts.hpp>
+#include "../src/gizmos/basic_scene_object.hpp"
 #include "../src/gizmos/lighting.hpp"
-
-namespace
-{
-
-template<typename T>
-class SceneObject
-{
-public:
-    SceneObject()
-    {
-        t = new T();
-        pos_ = glm::vec3(0.0);
-        v_ = glm::vec3(0.0);
-        theta_ = glm::vec3(0.0);
-        w_ = glm::vec3(0.0);
-    }
-
-    glm::vec3 Theta()
-    {
-        return theta_;
-    }
-
-    void UpdateTheta(float dt)
-    {
-        theta_ += w_ * dt;
-
-        // Update each component's angle
-        for (int i = 0; i < 3; i++)
-        {
-            if (theta_[i] <= -glm::two_pi<float>())
-                theta_[i] += glm::two_pi<float>();
-            else if (theta_[i] >= glm::two_pi<float>())
-                theta_[i] -= glm::two_pi<float>();
-        }
-    }
-
-    void SetAngularVelocity(glm::vec3 w) { w_ = w; }
-
-    T* t;
-
-    glm::vec3 pos_;
-    glm::vec3 v_;
-
-    glm::vec3 theta_;
-    glm::vec3 w_;
-};
-
-}
-
 
 class LightingScene : public gl00::Scene
 {
@@ -85,9 +37,9 @@ private:
 
     glm::vec3 light_pos = glm::vec3(.5,1.75,0);
 
-    SceneObject<int> g_object;
-    SceneObject<gl00::Lighting::SpotLight> g_spotlight;
-    SceneObject<gl00::Lighting::PointLight> g_pointlights[2];
+    gl00::BasicSceneObject<int> g_object;
+    gl00::BasicSceneObject<gl00::Lighting::SpotLight> g_spotlight;
+    gl00::BasicSceneObject<gl00::Lighting::PointLight> g_pointlights[2];
 };
 
 

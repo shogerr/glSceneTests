@@ -57,7 +57,10 @@ message("${TEST_SOURCE}")
 # Ensure glad is compiled.
 set_source_files_properties( src/glad.c PROPERTIES LANGUAGE CXX )
 
-# Create test target.
+# Create current test target.
+add_executable(test_resources "tests/test_resources.cpp" "src/sdl/sdl_helper.cpp" "src/glad.c")
+
+# Old tests
 add_executable(test_model "src/glad.c" "src/test/test_model.cpp" "src/model.cpp" "src/mesh.cpp" "include/gl00/model.hpp")
 add_executable(test_scene_object "tests/test_scene_object.cpp" "src/sdl/sdl_helper.cpp")
 add_executable(test_pointer "src/glad.c" "tests/test_pointer.cpp")
@@ -76,6 +79,8 @@ target_link_libraries(gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})
 target_link_libraries(renderer gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY})
 target_link_libraries(test_model ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})
 target_link_libraries(test_scene_object gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY})
+
+target_link_libraries(test_resources gl00-static ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY})
 
 ASSIMP_COPY_BINARIES(${CMAKE_CURRENT_BINARY_DIR})
 

@@ -1,11 +1,12 @@
+#include <gl00/engine.hpp>
+
 #include <gl00/common.hpp>
 #include <gl00/scene_manager.hpp>
-#include <gl00/engine.hpp>
 
 //#include "scenes/instance_test.hpp"
 #include "scenes/scattering_scene.hpp"
 
-static gl00::Engine* g_engine = NULL;
+static gl00::Engine* g_engine = nullptr;
 
 static const void _logOpenGlError(GLenum err)
 {
@@ -21,14 +22,20 @@ static const void _logOpenGlError(GLenum err)
     }
 }
 
-gl00::Engine::Engine () : first_frame_(true), has_globjects_(false)
+gl00::Engine::Engine() : first_frame_(true), has_globjects_(false), default_scene_(nullptr)
+{
+    g_engine = this;
+    LOGI("Engine!\n");
+}
+
+gl00::Engine::Engine(gl00::Scene* scene) : default_scene_(scene)
 {
     g_engine = this;
 }
 
 gl00::Engine::~Engine()
 {
-    g_engine = NULL;
+    g_engine = nullptr;
 }
 
 gl00::Engine* gl00::Engine::GetInstance()
@@ -95,7 +102,11 @@ void gl00::Engine::DoFrame()
     if (first_frame_)
     {
         first_frame_ = false;
-        mgr->RequestNewScene(new gl00::scenes::ScatteringScene);
+        if (default_scene_ != nullptr)
+            mgr->RequestNewScene(new gl00::scenes::ScatteringScene);
+            //mgr->RequestNewScene(default_scene_);
+        else
+            mgr->RequestNewScene(new gl00::scenes::ScatteringScene);
     }
 
     mgr->DoFrame();

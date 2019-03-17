@@ -1,7 +1,7 @@
 #include <gl00/scene_manager.hpp>
 #include <gl00/scene.hpp>
 
-static gl00::SceneManager g_scene_manager;
+static gl00::SceneManager g_scene_manager{};
 
 gl00::SceneManager::SceneManager()
 {

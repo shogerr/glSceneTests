@@ -30,30 +30,30 @@ namespace gl00
 
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, unsigned int num_instances);
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures);
-        ~Mesh();
+        ~Mesh() = default;
 
         void Draw(Shader* shader);
         void UpdateModel(glm::mat4* model);
 
         std::vector<Mesh::Texture> GetTextures();
+
         GLuint Vbo() { return vbo_; };
-        int IndicesCount();
+        int IndicesCount() { return index_count_; }
         int VertexCount() { return vertex_count_; };
 
         GLuint vao_;
 
         unsigned int instance_count_;
     private:
-        std::vector<Vertex> vertices_;
-        std::vector<GLuint> indices_;
         std::vector<Mesh::Texture> textures_;
 
         unsigned int vertex_count_;
+        unsigned int index_count_;
 
         GLuint vbo_, ebo_;
         GLuint model_bo_;
 
-        virtual void SetupMesh();
+        virtual void SetupMesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices);
     };
 }
 

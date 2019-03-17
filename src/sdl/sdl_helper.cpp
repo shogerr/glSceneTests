@@ -1,5 +1,5 @@
-#include <gl00/common.hpp>
 #include "sdl_helper.hpp"
+#include <gl00/common.hpp>
 
 void gl00::_SDL_CheckError(int line)
 {
@@ -13,7 +13,7 @@ void gl00::_SDL_CheckError(int line)
     }
 }
 
-void gl00::_SDL_Init(SDL_Window *&window, SDL_GLContext &context, int width, int height)
+void gl00::_SDL_Init(std::unique_ptr<SDL_Window, void (*)(SDL_Window*)> & window, SDL_GLContext &context, int width, int height)
 {
     SDL_GLContext context_;
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -25,22 +25,21 @@ void gl00::_SDL_Init(SDL_Window *&window, SDL_GLContext &context, int width, int
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 
-    /*
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
-    */
 
-    window = SDL_CreateWindow("test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    window.reset(SDL_CreateWindow("test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE));
+
     if (!window) {
         SDL_Log("%s:\n", SDL_GetError());
         SDL_Quit();
         exit(1);
     }
 
-    context_ = SDL_GL_CreateContext(window);
+    context_ = SDL_GL_CreateContext(window.get());
 
     // The old GLEW method.
     //

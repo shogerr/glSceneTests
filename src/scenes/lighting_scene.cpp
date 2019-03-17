@@ -85,7 +85,7 @@ void LightingScene::DoFrame()
 
     g_object.UpdateTheta(dt);
 
-    //model = glm::rotate(model, g_object.Theta().x, glm::vec3(0.0, 1.0, 0.0));
+    model = glm::rotate(model, g_object.Theta().x, glm::vec3(0.0, 1.0, 0.0));
     model = glm::translate(model, glm::vec3(glm::cos(g_object.Theta().x), .45,  0.0));
     model = glm::scale(model, glm::vec3(.25));
 
