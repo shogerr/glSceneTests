@@ -22,10 +22,13 @@ namespace gl00
 
         void RequestNewScene(Scene* scene);
 
-        void Poke(unsigned int);
+        void Poke(int);
 
         void UpdateMouseMotion(float x, float y);
         void UpdateJoy(float x, float y);
+
+        int Width() { return screen_width_; }
+        int Height() { return screen_height_; }
 
         static SceneManager* GetInstance();
     private:

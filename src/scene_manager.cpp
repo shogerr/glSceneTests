@@ -3,16 +3,13 @@
 
 static gl00::SceneManager g_scene_manager{};
 
-gl00::SceneManager::SceneManager()
-{
-    current_scene_ = std::nullptr_t{};
-    scene_to_install_ = std::nullptr_t{};
-
-    screen_width_ = 512;
-    screen_height_ = 512;
-
-    has_graphics_ = false;
-}
+gl00::SceneManager::SceneManager() :
+    current_scene_(nullptr),
+    scene_to_install_(nullptr),
+    screen_width_(640),
+    screen_height_(480),
+    has_graphics_(false)
+{}
 
 gl00::SceneManager* gl00::SceneManager::GetInstance()
 {
@@ -69,7 +66,7 @@ void gl00::SceneManager::KillGraphics() {
     }
 }
 
-void gl00::SceneManager::Poke(unsigned int i)
+void gl00::SceneManager::Poke(int i)
 {
     current_scene_->Poke(i);
 }

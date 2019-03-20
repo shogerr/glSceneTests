@@ -1,7 +1,6 @@
 #include <gl00/model.hpp>
 #include <assimp/postprocess.h>
 #include <fstream>
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
 gl00::Model::Model(std::string path) :
@@ -139,7 +138,7 @@ gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
         std::vector<gl00::Mesh::Texture> specular_maps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
-        LOGI("Found materials:\nTextures: %d\nSpecularMaps: %d\n", diffuse_maps.size(), specular_maps.size());
+        LOGI("Found materials:\nTextures: %I64u\nSpecularMaps: %I64u\n", diffuse_maps.size(), specular_maps.size());
     }
 
     return gl00::Mesh(vertices, indices, textures, instance_count_);

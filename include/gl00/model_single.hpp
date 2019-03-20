@@ -2,30 +2,37 @@
 #define __MODEL_SINGLE_HPP
 
 #include <string>
+
+#include <gl00/common.hpp>
+#include <gl00/shader.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
+
 #include "mesh_single.hpp"
- 
 
-class ModelSingle
+namespace gl00
 {
-public:
-    ModelSingle(std::string path);
-    void Draw();
-    // TODO: take mMeshes out of public space
-    std::vector<MeshSingle> meshes_;
+    class ModelSingle
+    {
+    public:
+        ModelSingle(std::string path);
+        void Draw(gl00::Shader* shader);
 
-    static GLuint TextureFromFile(const char* path, std::string directory);
-private:
-    std::vector<MeshSingle::Texture> loaded_textures_;
-    std::string model_directory_;
+        // TODO: take mMeshes out of public space
+        std::vector<MeshSingle> meshes_;
 
-    void LoadModel(std::string& path);
+        static GLuint TextureFromFile(const char* path, std::string directory);
+    private:
+        std::vector<MeshSingle::Texture> loaded_textures_;
+        std::string model_directory_;
 
-    void ProcessNode(aiNode* node, const aiScene* scene);
-    MeshSingle ProcessMesh(aiMesh* mesh, const aiScene* scene);
+        void LoadModel(std::string& path);
 
-    std::vector<MeshSingle::Texture> loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name);
-};
+        void ProcessNode(aiNode* node, const aiScene* scene);
+        MeshSingle ProcessMesh(aiMesh* mesh, const aiScene* scene);
+
+        std::vector<MeshSingle::Texture> loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name);
+    };
+}
 
 #endif // !__MODEL_HPP

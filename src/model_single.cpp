@@ -1,15 +1,22 @@
-#include "model_single.hpp"
+#include <gl00/model_single.hpp>
 #include <assimp/postprocess.h>
 #include <fstream>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-ModelSingle::ModelSingle(std::string path)
+gl00::ModelSingle::ModelSingle(std::string path)
 {
     LoadModel(path);
 }
 
-void ModelSingle::LoadModel(std::string& path)
+void gl00::ModelSingle::Draw(gl00::Shader*  shader)
+{
+    for (auto m : meshes_)
+        m.Draw(shader);
+}
+
+void gl00::ModelSingle::LoadModel(std::string& path)
 {
     Assimp::Importer importer;
 
@@ -40,7 +47,7 @@ void ModelSingle::LoadModel(std::string& path)
     //meshes_.push_back(ProcessMesh(scene->mMeshes[0], scene));
 }
 
-void ModelSingle::ProcessNode(aiNode * node, const aiScene * scene)
+void gl00::ModelSingle::ProcessNode(aiNode * node, const aiScene * scene)
 {
     for (GLuint i = 0; i < node->mNumMeshes; ++i)
     {
@@ -52,7 +59,7 @@ void ModelSingle::ProcessNode(aiNode * node, const aiScene * scene)
         ProcessNode(node->mChildren[i], scene);
 }
 
-MeshSingle ModelSingle::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+gl00::MeshSingle gl00::ModelSingle::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
     std::vector<MeshSingle::Vertex> vertices;
     std::vector<GLuint> indices;
@@ -98,7 +105,7 @@ MeshSingle ModelSingle::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     return MeshSingle(vertices, indices, textures);
 }
 
-std::vector<MeshSingle::Texture> ModelSingle::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
+std::vector<gl00::MeshSingle::Texture> gl00::ModelSingle::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string type_name)
 {
     std::vector<MeshSingle::Texture> textures;
 
@@ -135,7 +142,7 @@ std::vector<MeshSingle::Texture> ModelSingle::loadMaterialTextures(aiMaterial* m
     return textures;
 }
 
-GLuint ModelSingle::TextureFromFile(const char* path, std::string directory)
+GLuint gl00::ModelSingle::TextureFromFile(const char* path, std::string directory)
 {
     std::string filename = directory + '/' + std::string(path);
 

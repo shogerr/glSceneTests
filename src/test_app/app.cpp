@@ -1,6 +1,4 @@
-#include <gl00/common.hpp>
-#include <gl00/engine.hpp>
-#include <gl00/scene_manager.hpp>
+#include <gl00/gl00.hpp>
 
 #include "../sdl/sdl_helper.hpp"
 
@@ -124,7 +122,6 @@ draw:
 
 exit:
     SDL_GL_DeleteContext(context);
-    //SDL_DestroyWindow(window);
     SDL_Quit();
 
     return 0;

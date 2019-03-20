@@ -1,11 +1,13 @@
 #ifndef __COMMON_HPP
 #define __COMMON_HPP
 
-#if defined(_WIN32)
+//#if defined(_WIN32)
 #include <windows.h>
-#endif
+//#endif
 
 #include <chrono>
+
+// GLEW Implementation
 
 //#include <GL/glew.h>
 //#include <GL/GL.h>
@@ -13,10 +15,10 @@
 #include <glad/glad.h>
 
 #define GLM_ENABLE_EXPIREMENTAL
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#define GLM_FORCE_RADIANS
 #include <stdio.h>
 
 #define EPSILON 0.0000001f

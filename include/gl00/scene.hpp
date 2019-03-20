@@ -6,7 +6,7 @@ namespace gl00
     class Scene
     {
     public:
-        virtual ~Scene();
+        virtual ~Scene() = 0;
         virtual void OnStartGraphics();
         virtual void OnKillGraphics();
 
@@ -20,7 +20,7 @@ namespace gl00
         virtual void OnMouseMotion(float x, float y);
         virtual void OnJoy(float x, float y);
 
-        virtual void Poke(unsigned int i);
+        virtual void Poke(int i);
     };
 }
 #endif // __SCENE_HPP

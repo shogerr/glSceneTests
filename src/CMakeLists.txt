@@ -5,7 +5,9 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scene_manager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/model_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/mesh_single.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/shader.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/scene_object.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/state_solver.cpp

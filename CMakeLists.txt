@@ -73,6 +73,9 @@ include_directories(include)
 include_directories("${SDL2_INCLUDE_DIR}")
 include_directories("${assimp_INCLUDE_DIR}")
 
+target_compile_definitions(test_resources PRIVATE HEADER_OBJ_LOADER=1)
+target_compile_definitions(gl00-static PRIVATE HEADER_OBJ_LOADER=1)
+
 # Set targets links
 target_link_libraries(gl00-shared ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})
 target_link_libraries(gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})

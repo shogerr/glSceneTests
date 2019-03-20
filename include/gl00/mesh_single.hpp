@@ -3,34 +3,47 @@
 
 #include <vector>
 #include <string>
-#include "common.hpp"
 #include <assimp\types.h>
+#include "common.hpp"
+#include "shader.hpp"
 
-class MeshSingle
+namespace gl00
 {
-public:
-    struct Vertex
+    class MeshSingle
     {
-        glm::vec4 position;
-        glm::vec2 texcoords;
-        glm::vec3 normal;
+    public:
+        struct Vertex
+        {
+            glm::vec4 position;
+            glm::vec3 normal;
+            glm::vec2 texcoords;
+        };
+
+        struct Texture
+        {
+            GLuint id;
+            std::string type;
+            aiString path;
+        };
+
+        MeshSingle(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vector<Texture>& textures);
+
+        void Draw(gl00::Shader* shader);
+
+        GLuint Vbo() { return vbo_; }
+        GLuint Ebo() { return ebo_; }
+
+        GLsizei VertexCount() { return vertex_count_; }
+        GLsizei IndexCount() { return index_count_; }
+
+        std::vector<MeshSingle::Texture> textures_;
+    private:
+        void SetupMesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices);
+
+        unsigned int index_count_;
+        unsigned int vertex_count_;
+
+        GLuint vao_, vbo_, ebo_;
     };
-
-    struct Texture
-    {
-        GLuint id;
-        std::string type;
-        aiString path;
-    };
-
-    MeshSingle(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vector<Texture>& textures);
-
-    std::vector<MeshSingle::Texture> textures_;
-
-    GLuint vao_, vbo_, ebo_;
-
-private:
-    virtual void SetupMesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices);
-
-};
+}
 #endif // !__MESH_HPP

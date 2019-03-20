@@ -9,4 +9,4 @@ void gl00::Scene::OnInstall() {}
 void gl00::Scene::OnUnInstall() {}
 void gl00::Scene::OnMouseMotion(float x, float y) {}
 void gl00::Scene::OnJoy(float x, float y) {}
-void gl00::Scene::Poke(unsigned int) {}
+void gl00::Scene::Poke(int) {}

@@ -4,11 +4,14 @@
 
 #include "../src/sdl/sdl_helper.hpp"
 
-constexpr int WIDTH = 768;
-constexpr int HEIGHT = 768;
+constexpr int WIDTH = 640;
+constexpr int HEIGHT = 480;
 
 int main(int argc, char* agv[])
 {
+#ifdef HEADER_OBJECT_LOADER
+    LOGI("HEADER_OBJ_LOADER defined.\n");
+#endif
     // Test Case 1
     //std::unique_ptr<gl00::scenes::BezierScene> test_scene(new gl00::scenes::BezierScene);
 
@@ -29,9 +32,9 @@ int main(int argc, char* agv[])
     SDL_Log("%s\n", glGetString(GL_VENDOR));
     SDL_Log("%s\n", glGetString(GL_VERSION));
 
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
 
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     int width, height = 0;
@@ -52,10 +55,15 @@ int main(int argc, char* agv[])
             switch (e.type)
             {
             case SDL_KEYDOWN:
+                mgr->Poke(e.key.keysym.sym);
+                /*
                 switch (e.key.keysym.sym)
                 {
-                    
+                case SDLK_q:
+                    mgr->Poke();
+                    break;
                 }
+                */
                 break;
             case SDL_QUIT:
                 goto exit;

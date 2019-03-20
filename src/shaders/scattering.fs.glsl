@@ -1,27 +1,27 @@
-#version 460 core
+#version 460
 
 out vec4 frag_color;
 
-in vec2 tex_coord_;
-in vec3 color_;
 in vec4 projection_coord_;
 in vec3 normal_;
 
-layout(location = 3) uniform vec3 u_light_direction;
-layout(location = 4) uniform sampler2D texture_diffuse;
-layout(location = 5) uniform sampler2D texture_d;
+layout(location = 5) uniform vec3 u_light_direction;
+layout(location = 6) uniform sampler2D texture_diffuse;
+layout(location = 7) uniform float u_wrap;
+layout(location = 8) uniform float u_width;
+layout(location = 9) uniform float u_falloff;
 
 float WrapLighting(float x, float wrap)
 {
-    return (x + wrap) / (1. + wrap);
+    return (x + wrap) / (1.0 + wrap);
 }
 
 float ScatterIntensity(float x, float width)
 {
-    if (width == 0.)
-        return 0.;
+    if (width == 0.0)
+        return 0.0;
 
-    return smoothstep(0., width, x) * smoothstep(width * 2., width, x);
+    return smoothstep(0.0, width, x) * smoothstep(width * 2.0, width, x);
 }
 
 float DepthPassSpace(float coord)
@@ -29,15 +29,15 @@ float DepthPassSpace(float coord)
     float near = 1.0;
     float far = 100.0;
 
-    float NDC = (coord - .5) * 2.;
-    return -2. * far * near / (NDC * (near - far) + near + far);
+    float NDC = (coord - 0.5) * 2.0;
+    return -2 * far * near / (NDC * (near - far) + far + near);
 }
 
 void main()
 {
-    float u_wrap = .1;
-    float u_width = .5;
-    float u_falloff = 5.;
+    //float u_wrap = 0.5;
+    //float u_width = 0.5;
+    //float u_falloff = 2.0;
 
     //color = vec4(1.0);
     float coord = texture(texture_diffuse, projection_coord_.xy / projection_coord_.w).r;
@@ -60,5 +60,6 @@ void main()
     //frag_color = texture(texture_diffuse, projection_coord_.xy/projection_coord_.w);
 
     //frag_color = texture(texture_diffuse, tex_coord_);
-    frag_color = vec4(.8, .3, .3, 1.) * diffuse_intensity + vec4(.7, 1., .1, 1.) * scatter_intensity * falloff;
+    frag_color = vec4(0.2, 1.0, 0.3, 1.0) * diffuse_intensity + vec4(1., .1, 0.1, 1.0) * scatter_intensity * falloff;
+    //frag_color = vec4(1., .5, .5, 1.);
 }

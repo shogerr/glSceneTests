@@ -1,5 +1,7 @@
 #include "sdl_helper.hpp"
-#include <gl00/common.hpp>
+#include <glad/glad.h>
+
+//#include <gl00/common.hpp>
 
 void gl00::_SDL_CheckError(int line)
 {
