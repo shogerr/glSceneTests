@@ -1,46 +1,40 @@
 #include <gl00/mesh.hpp>
 
-gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, unsigned int num_instances)
+gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures, size_t num_instances     )
+    :
+    instance_count_(num_instances),
+    textures_(textures),
+    vertex_count_(vertices.size()),
+    index_count_(indices.size())
 {
-    instance_count_ = num_instances;
-
-    textures_ = textures;
-
-    vertex_count_ = vertices.size();
-    index_count_ = indices.size();
-
     SetupMesh(vertices, indices);
 }
 
-gl00::Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Mesh::Texture> textures) :
-    Mesh(vertices, indices, textures, 1)
-{}
-
-std::vector<gl00::Mesh::Texture> gl00::Mesh::GetTextures()
+std::vector<gl00::Mesh::Texture>& gl00::Mesh::GetTextures()
 {
     return textures_;
 }
 
-void gl00::Mesh::Draw(gl00::Shader* shader)
+void gl00::Mesh::Draw(gl00::Shader& shader)
 {
     for (GLuint i = 0; i < textures_.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
 
         if (i%2 == 0)
-            glProgramUniform1i(shader->program_, 4, i);
+            glProgramUniform1i(shader.program_, 4, i);
         else
-            glProgramUniform1i(shader->program_, 5, i);
+            glProgramUniform1i(shader.program_, 5, i);
 
         glBindTexture(GL_TEXTURE_2D, textures_[i].id);
     }
     glBindVertexArray(vao_);
-    glDrawElementsInstanced(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, 0, instance_count_);
+    glDrawElementsInstanced(GL_TRIANGLES, (GLsizei)index_count_, GL_UNSIGNED_INT, 0, (GLsizei)instance_count_);
 }
 
 void gl00::Mesh::UpdateModel(glm::mat4* model)
 {
-    if (instance_count_ > 1)
+    if (instance_count_ > 0)
     {
         glBindBuffer(GL_ARRAY_BUFFER, model_bo_);
         glm::mat4* mesh_model_mat = (glm::mat4*)glMapBufferRange(GL_ARRAY_BUFFER, 0, instance_count_ * sizeof(glm::mat4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
@@ -93,4 +87,19 @@ void gl00::Mesh::SetupMesh(const std::vector<Vertex>& vertices, const std::vecto
     }
 
     glBindVertexArray(0);
+}
+
+void gl00::Mesh::Clean()
+{
+    LOGD("Cleaning mesh.\n");
+    for (int i = 0; i < 6; ++i)
+        glDisableVertexArrayAttrib(vao_, i);
+
+    glDeleteVertexArrays(1, &vao_);
+    glDeleteBuffers(1, &vbo_);
+    glDeleteBuffers(1, &ebo_);
+    glDeleteBuffers(1, &model_bo_);
+
+    for (auto const& t : textures_)
+        glDeleteTextures(1, &t.id);
 }

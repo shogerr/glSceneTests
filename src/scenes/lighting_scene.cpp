@@ -65,6 +65,7 @@ void LightingScene::DoFrame()
 {
     uint64_t now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
 
+    std::shared_ptr<glm::mat4> p_model{ new glm::mat4[3] };
     float dt = float(now - last_frame_ns_) * 0.000000001f;
 
     if (dt > 1)
@@ -81,15 +82,15 @@ void LightingScene::DoFrame()
     glClearColor(.5, .5, .5, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 model = glm::mat4(1.0);
+    std::shared_ptr<glm::mat4> model{ new glm::mat4(1.0) };
 
     g_object.UpdateTheta(dt);
 
-    model = glm::rotate(model, g_object.Theta().x, glm::vec3(0.0, 1.0, 0.0));
-    model = glm::translate(model, glm::vec3(glm::cos(g_object.Theta().x), .45,  0.0));
-    model = glm::scale(model, glm::vec3(.25));
+    *model.get() = glm::rotate(*model.get(), g_object.Theta().x, glm::vec3(0.0, 1.0, 0.0));
+    *model.get() = glm::translate(*model.get(), glm::vec3(glm::cos(g_object.Theta().x), .45,  0.0));
+    *model.get() = glm::scale(*model.get(), glm::vec3(.25));
 
-    scene_model_->UpdateModel(&model);
+    scene_model_->UpdateModel(model);
     //scene_model_->meshes_[0].UpdateModel(model);
 
     glUseProgram(scene_program);
@@ -135,21 +136,19 @@ void LightingScene::DoFrame()
     glProgramUniformMatrix4fv(light_program, 0, 1, GL_FALSE, glm::value_ptr(view_));
     glProgramUniformMatrix4fv(light_program, 1, 1, GL_FALSE, glm::value_ptr(projection_));
 
-    glm::mat4* p_model = new glm::mat4[3];
 
-    model = glm::translate(glm::mat4(1.0), g_spotlight.t->position);
-    p_model[0] = glm::scale(model, glm::vec3(.08f));
+    *model.get() = glm::translate(glm::mat4(1.0), g_spotlight.t->position);
+    p_model.get()[0] = glm::scale(*model.get(), glm::vec3(.08f));
 
-    model = glm::translate(glm::mat4(1.0), g_pointlights[0].t->position);
-    p_model[1] = glm::scale(model, glm::vec3(.08f));
+    *model.get() = glm::translate(glm::mat4(1.0), g_pointlights[0].t->position);
+    p_model.get()[1] = glm::scale(*model.get(), glm::vec3(.08f));
 
-    model = glm::translate(glm::mat4(1.0), g_pointlights[1].t->position);
-    p_model[2] = glm::scale(model, glm::vec3(.08f));
+    *model.get() = glm::translate(glm::mat4(1.0), g_pointlights[1].t->position);
+    p_model.get()[2] = glm::scale(*model.get(), glm::vec3(.08f));
 
     light_model_->UpdateModel(p_model);
 
     light_model_->Draw(shaders_.back());
-    delete[] p_model;
 
 update_time:
     last_frame_ns_ = now;

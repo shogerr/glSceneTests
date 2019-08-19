@@ -1,36 +1,36 @@
 #include "texture_scene.hpp"
+
 #include <chrono>
 #include <random>
 
 
-TextureScene::TextureScene()
+gl00::scenes::TextureScene::TextureScene() : theta_(1.f), dir_(1), last_frame_ns_(0)
 {
     focus_ = Particle{ glm::vec3(0.0f), glm::vec3(0.05f, 0.05f, .0f), 0.9f };
-    texture_scene_ = 1;
+    texture_scene_ = 2;
 }
 
-void TextureScene::SetTextureView(int scene_view)
+void gl00::scenes::TextureScene::SetTextureView(int scene_view)
 {
     texture_scene_ = scene_view;
 }
 
-
-void TextureScene::OnStartGraphics()
+void gl00::scenes::TextureScene::OnStartGraphics()
 {
+    using ShaderList = std::vector<std::pair <GLenum, std::string >>;
+
     int width = 1, height = 1;
 
     theta_ = 1.0f;
     dir_ = 1;
-
     last_frame_ns_ = 0;
 
-    sphere_model_ = new gl00::Model("../src/test/face_textured.obj");
+    sphere_model_ = std::make_unique<gl00::Model>("assets/face_textured.obj");
 
-    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/texture_vertex.glsl"},
-                                                                     {GL_FRAGMENT_SHADER, "../src/shaders/texture_fragment.glsl"} };
+    ShaderList shaderFilenames = { {GL_VERTEX_SHADER, "shaders/texture_vertex.glsl"},
+                                   {GL_FRAGMENT_SHADER, "shaders/texture_fragment.glsl"} };
 
-    shader_ = new gl00::Shader(shaderFilenames);
-
+    shader_ = std::make_unique<gl00::Shader>(shaderFilenames);
 
     glGenTextures(1, &emptytex_);
 
@@ -40,7 +40,7 @@ void TextureScene::OnStartGraphics()
     glBindTexture(GL_TEXTURE_2D, emptytex_);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, &image[0]);
 
-    scenetex_ = gl00::TextureFromFile("eyes.jpg", "../src/test");
+    scenetex_ = gl00::TextureFromFile("eyes.jpg", "assets");
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
@@ -48,7 +48,7 @@ void TextureScene::OnStartGraphics()
     glDepthRange(0.0f, 2.0f);
 }
 
-void TextureScene::Step()
+void gl00::scenes::TextureScene::Step()
 {
     uint64_t now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
 
@@ -98,11 +98,11 @@ update_time:
     last_frame_ns_ = now;
 }
 
-void TextureScene::DoFrame()
+void gl00::scenes::TextureScene::DoFrame()
 {
     glClearColor(.2f, .2f, .2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(shader_->program_);
+    glUseProgram(shader_.get()->program_);
 
     Step();
 
@@ -116,7 +116,7 @@ void TextureScene::DoFrame()
         break;
     case 2:
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, sphere_model_->meshes_[0].GetTextures()[0].id);
+        glBindTexture(GL_TEXTURE_2D, sphere_model_->GetMesh(0).GetTextures()[0].id);
         break;
     case 4:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -130,6 +130,7 @@ void TextureScene::DoFrame()
         break;
     }
 
-    glBindVertexArray(sphere_model_->meshes_[0].vao_);
-    glDrawElements(GL_TRIANGLES, sphere_model_->meshes_[0].IndicesCount(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(sphere_model_->GetMesh(0).VAO());
+
+    glDrawElements(GL_TRIANGLES, (GLsizei)sphere_model_->GetMesh(0).IndicesCount(), GL_UNSIGNED_INT, 0);
 }

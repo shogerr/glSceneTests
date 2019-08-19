@@ -1,6 +1,6 @@
-#ifndef __ENGINE_HPP
-#define __ENGINE_HPP
+#pragma once
 
+#include <memory>
 #include "scene.hpp"
 
 namespace gl00
@@ -8,13 +8,14 @@ namespace gl00
     class Engine {
     public:
         Engine();
-        Engine(gl00::Scene* scene);
         ~Engine();
 
         void DoFrame();
-        static Engine* GetInstance();
+        static Engine& GetInstance();
 
         void SetScreenDimensions(int width, int height);
+        void SetDefaultScene(std::unique_ptr<gl00::Scene> scene);
+
     private:
         bool first_frame_;
         bool has_globjects_;
@@ -29,9 +30,7 @@ namespace gl00
         void KillContext();
         void KillGlObjects();
 
-        gl00::Scene* default_scene_;
+
+        std::unique_ptr<gl00::Scene> default_scene_;
     };
 }
-
-
-#endif // __ENGINE_HPP

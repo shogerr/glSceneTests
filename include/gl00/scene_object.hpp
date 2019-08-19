@@ -17,7 +17,7 @@ namespace gl00
 
         void Step(float dt) { solver_.Simulate(dt); }
         glm::vec3 Position() { return solver_.state_.position;  }
-        glm::vec3 Position(glm::vec3 position) { solver_.state_.position = position;  }
+        void Position(glm::vec3 position) { solver_.state_.position = position;  }
 
         T t_;
         class StateSolver solver_;

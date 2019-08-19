@@ -4,11 +4,11 @@
 
 void BallScene::OnStartGraphics()
 {
-    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/ball.vs.glsl"},
-                                                                     {GL_FRAGMENT_SHADER, "../src/shaders/ball.fs.glsl"} };
+    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "shaders/ball.vs.glsl"},
+                                                                     {GL_FRAGMENT_SHADER, "shaders/ball.fs.glsl"} };
 
-    std::vector<std::pair <GLenum, std::string >> light_shader_filenames = { {GL_VERTEX_SHADER, "../src/shaders/light.vs.glsl"},
-                                                                     {GL_FRAGMENT_SHADER, "../src/shaders/light.fs.glsl"} };
+    std::vector<std::pair <GLenum, std::string >> light_shader_filenames = { {GL_VERTEX_SHADER, "shaders/light.vs.glsl"},
+                                                                     {GL_FRAGMENT_SHADER, "shaders/light.fs.glsl"} };
     shader_ = new gl00::Shader(shaderFilenames);
     light_shader_ = new gl00::Shader(light_shader_filenames);
 
@@ -17,11 +17,11 @@ void BallScene::OnStartGraphics()
 
     obstacles_ = { glm::vec3{-1.6f, 1.5f, 5.5f }, glm::vec3{ 1.5f, 1.5f, 3.5f }, glm::vec3{ 4.5f, 1.5f, 3.5f} };
 
-    scene_model_ = new gl00::Model{ "../src/test/cube_object.obj" };
-    obstacle_model_ = new gl00::Model{ "../src/test/amanita_a.obj", 2000 };
-    light_model_ = new gl00::Model("../src/test/sphere_object.obj", 2);
+    scene_model_ = new gl00::Model{ "assets/cube_object.obj" };
+    obstacle_model_ = new gl00::Model{ "assets/amanita_a.obj", 3 };
+    light_model_ = new gl00::Model("assets/sphere_object.obj", 2);
 
-    p_scene_model_ = new glm::mat4(1.0f);
+    p_scene_model_ = std::make_shared<glm::mat4>(new glm::mat4(1.0f));
 
     scene_model_->UpdateModel(p_scene_model_);
 
@@ -41,11 +41,12 @@ void BallScene::OnStartGraphics()
     figure_ = new gl00::SceneObject<gl00::Model*>{ scene_model_ };
 
     // Setup ground plane
-    ground_plane_ = new gl00::Model{ "../src/test/ground_plane.obj" };
+    ground_plane_ = new gl00::Model{ "assets/ground_plane.obj" };
 
     ground_plane_model_ = glm::scale(glm::mat4(1.f), glm::vec3(15.f, 1.f, 15.f));
-    ground_plane_model_ = glm::translate(ground_plane_model_, glm::vec3(0.f, .5f, 0.f));
-    ground_plane_->UpdateModel(&ground_plane_model_);
+    ground_plane_model_ = glm::translate(ground_plane_model_, glm::vec3(0.f, 1.5f, 0.f));
+
+    ground_plane_->UpdateModel(ground_plane_model_);
 
     figure_->solver_.state_.position = glm::vec3(0.1f, 1.5f, 0.1f);
 

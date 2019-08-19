@@ -36,7 +36,7 @@ int main(int argc, char* agv[])
 
     int width, height = 0;
 
-    std::unique_ptr<gl00::SceneManager> mgr(gl00::SceneManager::GetInstance());
+    gl00::SceneManager& mgr = gl00::SceneManager::GetInstance();
     SDL_Event e;
 
     for (;;)
@@ -44,7 +44,7 @@ int main(int argc, char* agv[])
         SDL_GetWindowSize(window.get(), &width, &height);
         engine.SetScreenDimensions(width, height);
 
-        if (!mgr->GetScene())
+        if (!mgr.GetScene())
             goto draw;
 
         while (SDL_PollEvent(&e))
@@ -54,7 +54,10 @@ int main(int argc, char* agv[])
             case SDL_KEYDOWN:
                 switch (e.key.keysym.sym)
                 {
-                    
+                case SDLK_ESCAPE:
+                    goto exit;
+                default:
+                    break;
                 }
                 break;
             case SDL_QUIT:
@@ -66,7 +69,6 @@ draw:
         SDL_GL_SwapWindow(window.get());
     }
 exit:
-    mgr.release();
     SDL_GL_DeleteContext(context);
     SDL_Quit();
 

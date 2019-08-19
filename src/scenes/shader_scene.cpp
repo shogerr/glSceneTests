@@ -1,19 +1,18 @@
 #include "shader_scene.hpp"
 #include <chrono>
 
-void
-ShaderScene::OnStartGraphics()
+void gl00::scenes::ShaderScene::OnStartGraphics()
 {
-    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "../src/shaders/shader_scene.vs.glsl"},
-                                                                     {GL_FRAGMENT_SHADER, "../src/shaders/shader_scene.fs.glsl"} };
+    std::vector<std::pair <GLenum, std::string >> shaderFilenames = { {GL_VERTEX_SHADER, "shaders/shader_scene.vs.glsl"},
+                                                                     {GL_FRAGMENT_SHADER, "shaders/shader_scene.fs.glsl"} };
 
     shader_ = new gl00::Shader(shaderFilenames);
 
-    scene_model_ = new gl00::Model("../src/test/cube_object.obj");
+    scene_model_ = new gl00::Model("assets/cube_object.obj");
 
-    gl00::SceneManager* mgr = gl00::SceneManager::GetInstance();
+    gl00::SceneManager& mgr = gl00::SceneManager::GetInstance();
 
-    projection_ = glm::perspective(glm::radians(65.0f), mgr->GetScreenAspect(), 0.1f, 100.0f);
+    projection_ = glm::perspective(glm::radians(65.0f), mgr.GetScreenAspect(), 0.1f, 100.0f);
 
     view_position_ = glm::vec3(0.0, 1.0, -1.5);
 
@@ -32,8 +31,7 @@ ShaderScene::OnStartGraphics()
     animation_state_ = 3;
 }
 
-void
-ShaderScene::DoFrame()
+void gl00::scenes::ShaderScene::DoFrame()
 {
     uint64_t now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
     float dt = float(now - lastframe_) * 0.000000001f;
@@ -54,13 +52,12 @@ ShaderScene::DoFrame()
     glProgramUniform2f(scene_program, 3, time_.x, time_.y);
 
     gl00::Lighting::FillSpotLight(scene_program, 6, g_spotlight);
-    scene_model_->Draw(shader_);
+    scene_model_->Draw(*shader_);
 
     lastframe_ = now;
 }
 
-void
-ShaderScene::OnKillGraphics()
+void gl00::scenes:: ShaderScene::OnKillGraphics()
 {
     CleanUp(&shader_);
     CleanUp(&scene_model_);

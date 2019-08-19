@@ -1,6 +1,8 @@
 #ifndef __SCENE_MANAGER_HPP
 #define __SCENE_MANAGER_HPP
 
+#include <memory>
+
 namespace gl00
 {
     class Scene;
@@ -9,7 +11,11 @@ namespace gl00
     {
     public:
         SceneManager();
-        ~SceneManager() = default;
+        ~SceneManager() {};
+
+        SceneManager(SceneManager const&) = delete;
+        void operator=(SceneManager const&) = delete;
+
         void SetScreenSize(int width, int height);
         void KillGraphics();
         void StartGraphics();
@@ -20,22 +26,22 @@ namespace gl00
 
         void DoFrame();
 
-        void RequestNewScene(Scene* scene);
+        void RequestNewScene(std::unique_ptr<Scene> scene);
 
         void Poke(unsigned int);
 
         void UpdateMouseMotion(float x, float y);
         void UpdateJoy(float x, float y);
 
-        static SceneManager* GetInstance();
+        static SceneManager& GetInstance();
     private:
-        Scene* current_scene_;
+        std::unique_ptr<Scene> current_scene_;
         int screen_width_, screen_height_;
 
-        Scene* scene_to_install_;
+        std::unique_ptr<Scene> scene_to_install_;
         bool has_graphics_;
 
-        void InstallScene(gl00::Scene* new_scene);
+        void InstallScene(std::unique_ptr<gl00::Scene> new_scene);
     };
 }
 #endif // __SCENE_MANAGER_HPP

@@ -1,90 +1,106 @@
-cmake_minimum_required (VERSION 3.12.1)
-cmake_minimum_required (VERSION 3.12.1 FATAL_ERROR)
-
-# Set project.
-project(renderer LANGUAGES CXX)
+cmake_minimum_required (VERSION 3.15 FATAL_ERROR)
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix"  FORCE)
 
-set(CMAKE_CXX_STANDARD 17)
+include(cmake/list_all_properties.cmake)
+project(gl00 LANGUAGES CXX)
+
+#set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Set path to find local modules.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
-
-# Include useful functions.
-include("cmake/assign_source_group.cmake")
-
-# Add source and include directories, assign groups.
-add_subdirectory("${PROJECT_SOURCE_DIR}/src")
-assign_source_group(${SOURCE})
-
-#add_subdirectory("${PROJECT_SOURCE_DIR}/src/test_app")
-#assign_source_group(${TEST_SOURCE})
-
-add_subdirectory("${PROJECT_SOURCE_DIR}/include")
-assign_source_group(${HEADERS})
-
-# Force the console in Windows.
 if(WIN32)
+	if (MSVC_VERSION GREATER_EQUAL "1900")
+		include(CheckCXXCompilerFlag)
+		CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+		if (_cpp_latest_flag_supported)
+			add_compile_options("/std:c++latest")
+		endif ()
+	endif ()
+
+	# Force the console in Windows.
 	set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
 endif(WIN32)
 
+# Set path to find local scripts.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+
+find_package(assimp CONFIG REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(ZLIB)
+
+if (UNIX)
+	find_package(GLEW)
+	include_directories(${GLEW_INCLUDE_DIRS})
+endif()
+
+# Ensure glad is compiled.
+set_source_files_properties(src/glad.c PROPERTIES LANGUAGE CXX)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/src)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/include)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
+#TODO: Add tests back in
+#add_subdirectory(tests)
+
+#[[
+## gl00 Shared
 add_library(gl00-shared
 	SHARED
 	${SOURCE}
-	${HEADERS}
-)
+	)
 
+#set_target_properties(gl00-shared PROPERTIES OUTPUT_NAME gl00)
+
+target_include_directories(gl00-shared PRIVATE ${gl00_SOURCE_DIR}/include)
+
+target_link_libraries(gl00-shared
+	PUBLIC
+	assimp::assimp
+	OpenGL::GL
+	)
+#]]
+
+## gl00 Static
 add_library(gl00-static
 	STATIC
 	${SOURCE}
-	${HEADERS}
-)
+	)
 
-#set_target_properties(gl00-shared PROPERTIES OUTPUT_NAME gl00)
-#set_target_properties(gl00-static PROPERTIES OUTPUT_NAME gl00)
+set_target_properties(gl00-static PROPERTIES
+	MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+	DEBUG_POSTFIX d
+	)
 
-# Create main renderer target.
-add_executable(renderer
-	src/sdl/sdl_helper.hpp
-	src/sdl/sdl_helper.cpp
-    src/test_app/app.cpp
-	${HEADERS}
-)
+target_include_directories(gl00-static PRIVATE ${gl00_SOURCE_DIR}/include)
 
-message("${TEST_SOURCE}")
-# Ensure glad is compiled.
-set_source_files_properties( src/glad.c PROPERTIES LANGUAGE CXX )
+target_link_libraries(gl00-static
+	PUBLIC
+	assimp::assimp
+	OpenGL::GL
+	ZLIB::ZLIB
+	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib
+	)
 
-# Create current test target.
-add_executable(test_resources "tests/test_resources.cpp" "src/sdl/sdl_helper.cpp" "src/glad.c")
+#print_target_properties(assimp::assimp)
+#print_target_properties(ZLIB::ZLIB)
 
-# Old tests
-add_executable(test_model "src/glad.c" "src/test/test_model.cpp" "src/model.cpp" "src/mesh.cpp" "include/gl00/model.hpp")
-add_executable(test_scene_object "tests/test_scene_object.cpp" "src/sdl/sdl_helper.cpp")
-add_executable(test_pointer "src/glad.c" "tests/test_pointer.cpp")
-
-find_package(SDL2 REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(assimp REQUIRED)
-
-include_directories(include)
-include_directories("${SDL2_INCLUDE_DIR}")
-include_directories("${assimp_INCLUDE_DIR}")
-
-# Set targets links
-target_link_libraries(gl00-shared ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})
-target_link_libraries(gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})
-target_link_libraries(renderer gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY})
-target_link_libraries(test_model ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY})
-target_link_libraries(test_scene_object gl00-static ${assimp_LIBRARY} ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY})
-
-target_link_libraries(test_resources gl00-static ${OPENGL_gl_LIBRARY} ${SDL2_LIBRARY})
-
-ASSIMP_COPY_BINARIES(${CMAKE_CURRENT_BINARY_DIR})
-
-install(TARGETS renderer gl00-shared gl00-static
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION bin)
+#TODO: Add ability to dynamically link program; include the other runtimes.
+#[[
+install(FILES $<TARGET_FILE:SDL2::SDL2>
+	CONFIGURATIONS Debug
+	DESTINATION bin/Debug
+	)
+install(FILES $<TARGET_FILE:assimp::assimp>
+	CONFIGURATIONS Debug
+	DESTINATION bin/Debug
+	)
+#]]
+install(TARGETS gl00-static
+	LIBRARY DESTINATION lib/$<IF:$<CONFIG:Debug>,Debug,Release>
+	RUNTIME DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+	ARCHIVE DESTINATION lib
+	)

@@ -1,43 +1,45 @@
-#ifndef __TEXTURE_SCENE_HPP
-#define __TEXTURE_SCENE_HPP
+#pragma once
 
 #include <gl00/engine_parts.hpp>
 #include <gl00/model.hpp>
 
-class TextureScene : public gl00::Scene
+namespace gl00
 {
-public:
-    typedef struct particle {
-        glm::vec3 s;
-        glm::vec3 v;
+    namespace scenes
+    {
+        class TextureScene : public gl00::Scene
+        {
+        public:
+            typedef struct particle {
+                glm::vec3 s;
+                glm::vec3 v;
 
-        float e;
-    } Particle;
+                float e;
+            } Particle;
 
-    virtual void OnStartGraphics();
-    virtual void DoFrame();
+            void OnStartGraphics();
+            void DoFrame();
 
-    TextureScene();
+            TextureScene();
 
-    void SetTextureView(int scene_view);
+            void SetTextureView(int scene_view);
 
-private:
-    uint64_t last_frame_ns_;
-    gl00::Model* sphere_model_;
-    gl00::Shader* shader_;
+        private:
+            uint64_t last_frame_ns_;
+            std::unique_ptr<gl00::Model> sphere_model_;
+            std::unique_ptr<gl00::Shader> shader_;
 
-    GLuint emptytex_;
-    GLuint scenetex_;
+            GLuint emptytex_;
+            GLuint scenetex_;
 
-    float theta_;
-    int dir_;
+            float theta_;
+            int dir_;
 
-    int texture_scene_;
+            int texture_scene_;
 
-    Particle focus_;
+            Particle focus_;
 
-
-    void Step();
-};
-
-#endif __TEXTURE_SCENE_HPP
+            void Step();
+        };
+    }
+}

@@ -1,56 +1,73 @@
 #include <gl00/model.hpp>
+
 #include <assimp/postprocess.h>
-#include <fstream>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-gl00::Model::Model(std::string path) :
-    Model(path, 1)
-{}
+#include <fstream>
 
-gl00::Model::Model(std::string path, unsigned int instance_count)
+gl00::Model::Model(std::string path, size_t instance_count)
 {
     instance_count_ = instance_count;
     LoadModel(path);
 
-    LOGI("Loaded model\n");
-    model_ = new glm::mat4(1.0);
-    updated_model_ = false;
+    LOGI("Loaded model.\n");
+    model_ = std::shared_ptr<glm::mat4[]>{ new glm::mat4[instance_count_] };
+    for (int i = 0; i < instance_count_; i++)
+        model_.get()[i] = glm::mat4(1.f);
 }
 
 gl00::Model::~Model()
 {
-    CleanUp(&model_);
+    LOGD("Cleaning up model.\n");
+    for (auto const &t : loaded_textures_)
+        glDeleteTextures(1, &t.id);
+
+    for (auto &m : meshes_)
+        m.Clean();
+
 }
 
-void gl00::Model::Draw(Shader* shader)
+void gl00::Model::Draw(Shader& shader)
 {
-    for (auto m : meshes_)
+    // Update and draw each mesh from the model.
+    for (auto &m : meshes_)
     {
-        m.UpdateModel(model_);
+        m.UpdateModel(model_.get());
         m.Draw(shader);
     }
 }
 
-void gl00::Model::UpdateModel(glm::mat4* model)
+void gl00::Model::UpdateModel(std::shared_ptr<glm::mat4[]> model)
 {
-    if (!updated_model_)
-    {
-        delete model_;
-        updated_model_ = true;
-    }
-
+    //TODO fix this.
     model_ = model;
 }
 
-void gl00::Model::SetInstanceCount(unsigned int instance_count)
+void gl00::Model::UpdateModel(glm::mat4 model)
+{
+    *model_.get() = model;
+}
+
+void gl00::Model::UpdateModel(std::vector<glm::mat4> &model)
+{
+    for (int i = 0; i < instance_count_; ++i)
+        model_.get()[i] = model.at(i);
+}
+
+void gl00::Model::SetInstanceCount(size_t instance_count)
 {
     instance_count_ = instance_count;
     for (auto &m : meshes_)
-    {
         m.instance_count_ = instance_count_;
-    }
 
+}
+
+gl00::Mesh& gl00::Model::GetMesh(size_t index)
+{
+    // TODO: insert return statement here
+    return meshes_.at(index);
 }
 
 void gl00::Model::LoadModel(std::string& path)
@@ -63,7 +80,7 @@ void gl00::Model::LoadModel(std::string& path)
         fin.close();
     else
     {
-        printf("Couldn't open file: %s\n", path.c_str());
+        LOGE("Couldn't open file: %s\n", path.c_str());
         return;
     }
 
@@ -71,13 +88,12 @@ void gl00::Model::LoadModel(std::string& path)
 
     if (!scene)
     {
-        printf("%s\n", importer.GetErrorString());
+        LOGE("%s\n", importer.GetErrorString());
         return;
     }
 
-    printf("%d\n", scene->mMeshes[0]->mNumVertices);
-
     model_directory_ = path.substr(0, path.find_last_of('/'));
+
     LOGI("model directory: %s\n", model_directory_.c_str());
 
     ProcessNode(scene->mRootNode, scene);
@@ -109,24 +125,21 @@ gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 
         if (mesh->HasTextureCoords(0))
-        {
             vertex.texcoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
-        }
         else
             vertex.texcoords = glm::vec2(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }
-    
-    printf("Number of faces: %d\n", mesh->mNumFaces);
+
+    LOGI("Number of faces: %d\n", mesh->mNumFaces);
+
     // Setup indices
     for (GLuint i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
         for (GLuint j = 0; j < face.mNumIndices; j++)
-        {
             indices.push_back(face.mIndices[j]);
-        }
     }
 
     // Process Materials 
@@ -139,7 +152,7 @@ gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
         std::vector<gl00::Mesh::Texture> specular_maps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
-        LOGI("Found materials:\nTextures: %d\nSpecularMaps: %d\n", diffuse_maps.size(), specular_maps.size());
+        LOGI("Found materials:\nTextures: %zd\nSpecular Maps: %zd\n", diffuse_maps.size(), specular_maps.size());
     }
 
     return gl00::Mesh(vertices, indices, textures, instance_count_);
@@ -194,7 +207,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
         fin.close();
     else
     {
-        printf("Couldn't open file: %s\n", filename.c_str());
+        LOGE("Couldn't open file: %s\n", filename.c_str());
         return texture_id;
     }
 
@@ -206,7 +219,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
 
     glBindTexture(GL_TEXTURE_2D, texture_id);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    //glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -216,8 +229,9 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 11);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    LOGI("image loaded: %s\n", filename.c_str());
+    LOGI("Image loaded: %s\n", filename.c_str());
 
     stbi_image_free(image);
+
     return texture_id;
 }

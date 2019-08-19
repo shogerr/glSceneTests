@@ -1,5 +1,5 @@
 GL00
-======
+====
 
 ## Required
 
@@ -24,6 +24,17 @@ line to provide the installation paths for the libraries reqruired.
 
  - SDL2 - `SDL2_ROOT`
  - Assimp - `assimp_ROOT`
+ - glm - `glm_ROOT`
+
+#### Example
+
+```
+-DSDL2_ROOT=C:\Libraries\SDL2-2.0.10 -Dassimp_ROOT="C:\Program Files\Assimp" -Dglm_ROOT=C:\Libraries\glm
+```
+
+#### Visual Studio
+
+The line above can be entered under the build settings as *Cmake Command Arguments*.
 
 ## Building
 

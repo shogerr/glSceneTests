@@ -1,16 +1,14 @@
-#ifndef __COMMON_HPP
-#define __COMMON_HPP
+#pragma once
 
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 
-#include <chrono>
-
-//#include <GL/glew.h>
-//#include <GL/GL.h>
-
+#if defined(__linux__)
+#include <GL/glew.h>
+#else
 #include <glad/glad.h>
+#endif
 
 #define GLM_ENABLE_EXPIREMENTAL
 #include <glm/glm.hpp>
@@ -19,11 +17,19 @@
 #define GLM_FORCE_RADIANS
 #include <stdio.h>
 
+#include <chrono>
+
 #define EPSILON 0.0000001f
 
+#ifdef NDEBUG
+#define LOGE(...) ( printf(__VA_ARGS__) )
+#define LOGI(...)
+#define LOGD(...)
+#else
 #define LOGE(...) ( printf(__VA_ARGS__) )
 #define LOGI(...) ( printf(__VA_ARGS__) )
 #define LOGD(...) ( printf(__VA_ARGS__) )
+#endif
 
 // Clean up a resource (delete and set to null).
 template<typename T> void CleanUp(T** pptr) {
@@ -43,6 +49,7 @@ template<typename T> bool Comparef(T a, T b)
 
 static uint64_t TimeNs()
 {
-    return std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
+    using std::chrono::nanoseconds;
+    using std::chrono::steady_clock;
+    return std::chrono::time_point_cast<nanoseconds>(steady_clock::now()).time_since_epoch().count();
 }
-#endif //__COMMON_HPP

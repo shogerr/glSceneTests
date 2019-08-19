@@ -90,7 +90,8 @@ void gl00::scenes::ScatteringScene::OnStartGraphics()
 
     time_last_ns_ = TimeNs();
 
-    scene_model_->UpdateModel(&rotation_);
+    // TODO handle this case
+    //scene_model_->UpdateModel(&rotation_);
 
     counter_ = 0;
     Reshape();
