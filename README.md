@@ -18,7 +18,7 @@ vcpkg install assimp:x64-windows-static \
 ```
 
 **Generate Build Configuration**
-
+```
 cmake -A x64 -B build -S . -DVCPKG_TARGET_TRIPLET=x64-windows-static
 -DCMAKE_TOOLCHAIN_FILE="C:\path\to\vcpkg\scipts\buildsystems\vcpkg.cmake"
 ```
