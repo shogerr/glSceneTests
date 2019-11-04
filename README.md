@@ -1,51 +1,35 @@
 GL00
 ====
 
-## Required
-
- - OpenGL
- - SDL2 - `SDL2_ROOT`
- - Assimp - `assimp_ROOT`
-
-### Assimp
-
-When building the 'Debug' release for Assimp, configure the cmake project using
-`CMAKE_BUILD_TYPE`. This will suffix the assimp libraries build with a 'd'.
-
-```
-cmake -G "Visual Studio 15 2017 Win64" .. -DCMAKE_BUILD_TYPE=Debug
-```
+## Building
 
 ### Windows
 
-Cmake 3.12 or greated is required to build this project. The following entries
-can be provided to cmake as either environment variables or through the command
-line to provide the installation paths for the libraries reqruired.
+This project is most easily built in Windows using
+(Vcpkg)[https://github.com/microsoft/vcpkg].
 
- - SDL2 - `SDL2_ROOT`
- - Assimp - `assimp_ROOT`
- - glm - `glm_ROOT`
+#### Vcpkg Static Build Example
 
-#### Example
-
+**Vcpkg Setup**
 ```
--DSDL2_ROOT=C:\Libraries\SDL2-2.0.10 -Dassimp_ROOT="C:\Program Files\Assimp" -Dglm_ROOT=C:\Libraries\glm
+vcpkg install assimp:x64-windows-static \
+              sdl2:x64-windows-static \
+              glm:x64-windows-static
 ```
 
-#### Visual Studio
+**Generate Build Configuration**
 
-The line above can be entered under the build settings as *Cmake Command Arguments*.
-
-## Building
-
-Use cmake to create your build solution. 
-
-Currently supports "Visual Studio 15 2017".
-
-```
-$ mkdir build
-$ cd build
-$ cmake -G "Visual Studio 15 2017" ..
+cmake -A x64 -B build -S . -DVCPKG_TARGET_TRIPLET=x64-windows-static
+-DCMAKE_TOOLCHAIN_FILE="C:\path\to\vcpkg\scipts\buildsystems\vcpkg.cmake"
 ```
 
-Open the solution file and compile.
+**Build Project**
+```
+cmake --build build --config release
+```
+
+**Install**
+Install locally using CMake with `--prefix`.
+```
+cmake --install build --prefix .
+```
