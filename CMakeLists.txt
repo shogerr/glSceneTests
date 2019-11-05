@@ -1,41 +1,46 @@
 cmake_minimum_required (VERSION 3.15 FATAL_ERROR)
 
-set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix"  FORCE)
-
-include(cmake/list_all_properties.cmake)
 project(gl00 LANGUAGES CXX)
 
-#set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix"  FORCE)
 
-if(WIN32)
-	if (MSVC_VERSION GREATER_EQUAL "1900")
-		include(CheckCXXCompilerFlag)
-		CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-		if (_cpp_latest_flag_supported)
-			add_compile_options("/std:c++latest")
-		endif ()
-	endif ()
-
-	# Force the console in Windows.
-	set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
-endif(WIN32)
-
-# Set path to find local scripts.
+# Set path to find local modules.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
-find_package(assimp CONFIG REQUIRED)
-find_package(SDL2 CONFIG REQUIRED)
-find_package(glm CONFIG REQUIRED)
+# Import some debugging functions.
+include(cmake/list_all_properties.cmake)
+include(cmake/list_all_variables.cmake)
+
+# Macro for setting cpp standard in MSVC.
+include(cmake/msvc_cpp_latest.cmake)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(MSVC)
+	# Use /std:c++latest
+	msvc_use_cpp_lastest()
+	# Force the console in Windows.
+	set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
+else()
+	set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(UNIX)
+	find_package(SDL2 REQUIRED)
+	find_package(assimp REQUIRED)
+	find_package(glm REQUIRED)
+	find_package(GLEW)
+	include_directories(${GLEW_INCLUDE_DIRS})
+else()
+	find_package(SDL2 CONFIG REQUIRED)
+	find_package(assimp CONFIG REQUIRED)
+	find_package(glm CONFIG REQUIRED)
+endif()
+
 find_package(OpenGL REQUIRED)
 find_package(ZLIB)
 
-if (UNIX)
-	find_package(GLEW)
-	include_directories(${GLEW_INCLUDE_DIRS})
-endif()
-
-# Ensure glad is compiled.
+# Ensure glad source files are compiled.
 set_source_files_properties(src/glad.c PROPERTIES LANGUAGE CXX)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
@@ -43,64 +48,112 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 add_subdirectory(${PROJECT_SOURCE_DIR}/include)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
+
 #TODO: Add tests back in
 #add_subdirectory(tests)
 
-#[[
-## gl00 Shared
-add_library(gl00-shared
-	SHARED
-	${SOURCE}
-	)
-
-#set_target_properties(gl00-shared PROPERTIES OUTPUT_NAME gl00)
-
-target_include_directories(gl00-shared PRIVATE ${gl00_SOURCE_DIR}/include)
-
-target_link_libraries(gl00-shared
-	PUBLIC
-	assimp::assimp
-	OpenGL::GL
-	)
-#]]
-
-## gl00 Static
+##
+## GL00 Static Library
+##
 add_library(gl00-static
 	STATIC
 	${SOURCE}
 	)
 
-set_target_properties(gl00-static PROPERTIES
-	MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-	DEBUG_POSTFIX d
-	)
+add_library(gl00::gl00-static ALIAS gl00-static)
 
 target_include_directories(gl00-static PRIVATE ${gl00_SOURCE_DIR}/include)
 
-target_link_libraries(gl00-static
-	PUBLIC
-	assimp::assimp
-	OpenGL::GL
-	ZLIB::ZLIB
-	${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib
-	)
+# Change options if we are linking statically.
+if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
+	# Build the .lib file for statically linked WIN32 applications.
+	# Use the suffix '-static' to differentiate the static library on Windows.
+	set_target_properties(gl00-static PROPERTIES
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+		DEBUG_POSTFIX d
+		)
+	target_link_libraries(gl00-static
+		PUBLIC
+		assimp::assimp
+		OpenGL::GL
+		ZLIB::ZLIB
+		${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib
+		)
+elseif(WIN32)
+	# Build the .lib file for the dynamically linked WIN32 applications.
+	set_target_properties(gl00-static PROPERTIES
+		OUTPUT_NAME gl00
+		DEBUG_POSTFIX d
+		)
+	target_link_libraries(gl00-static
+		PUBLIC
+		assimp::assimp
+		OpenGL::GL
+		)
+else()
+	# Build the .a file for statically linked Linux applications.
+	set_target_properties(gl00-static PROPERTIES
+		OUTPUT_NAME gl00
+		DEBUG_POSTFIX d
+		)
+	target_link_libraries(gl00-static
+		PUBLIC
+		${assimp_LIBRARIES}
+		OpenGL::GL
+		)
+endif()
 
-#print_target_properties(assimp::assimp)
-#print_target_properties(ZLIB::ZLIB)
+##
+## GL00 Runtime Library
+##
+if(NOT VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
+	add_library(gl00
+		SHARED
+		${SOURCE}
+		)
+	set_target_properties(gl00 PROPERTIES
+		DEBUG_POSTFIX d
+		)
+	target_include_directories(gl00
+		PRIVATE ${gl00_SOURCE_DIR}/include
+		)
+	if(UNIX)
+		target_link_libraries(gl00
+			PUBLIC
+			${assimp_LIBRARY}
+			GLEW::GLEW
+			OpenGL::GL
+			)
+	elseif(WIN32)
+		target_link_libraries(gl00
+			PUBLIC
+			assimp::assimp
+			OpenGL::GL
+			)
+		# Install all of the runtime components.
+		install(FILES $<TARGET_FILE:SDL2::SDL2>
+			DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+			)
+		install(FILES $<TARGET_FILE:assimp::assimp>
+			DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+			)
+		install(FILES $<TARGET_FILE_DIR:gl00>/zlib$<$<CONFIG:Debug>:d>1.dll
+			DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+			)
+	endif()
+	install(TARGETS gl00
+		RUNTIME DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+		)
+endif()
 
-#TODO: Add ability to dynamically link program; include the other runtimes.
-#[[
-install(FILES $<TARGET_FILE:SDL2::SDL2>
-	CONFIGURATIONS Debug
-	DESTINATION bin/Debug
-	)
-install(FILES $<TARGET_FILE:assimp::assimp>
-	CONFIGURATIONS Debug
-	DESTINATION bin/Debug
-	)
-#]]
+# Install the static libraries.
 install(TARGETS gl00-static
-	LIBRARY DESTINATION lib/$<IF:$<CONFIG:Debug>,Debug,Release>
-	RUNTIME DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
 	ARCHIVE DESTINATION lib
 	)
+
+# Debug Environment
+#print_target_properties(assimp::assimp)
+#print_target_properties(OpenGL::OpenGL)
+#print_target_properties(gl00)
+
+#dump_cmake_variables()

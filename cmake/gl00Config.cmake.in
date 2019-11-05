@@ -1,0 +1,12 @@
+get_filename_component(gl00_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+include(CMakeFindDependencyMacro)
+list(APPEND CMAKE_MODULE_PATH ${gl00_CMAKE_DIR})
+
+find_dependency(OpenGL REQUIRED)
+find_dependency(assimp REQUIRED)
+
+if(NOT TARGET gl00::gl00)
+	include(${gl00_CMAKE_DIR}/gl00Targets.cmake)
+endif()
+
+set(gl00_LIBRARIES gl00::gl00)

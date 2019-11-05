@@ -3,7 +3,6 @@
 #include <gl00/common.hpp>
 #include <gl00/scene_manager.hpp>
 
-#include "scenes/instance_test.hpp"
 #include "scenes/blank.hpp"
 
 static const void _logOpenGlError(GLenum err)

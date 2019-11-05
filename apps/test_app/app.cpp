@@ -11,8 +11,7 @@ constexpr auto HEIGHT = 768;
 
 void Start()
 {
-    std::unique_ptr<SDL_Window, void (*)(SDL_Window*)> window
-        = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>(nullptr, SDL_DestroyWindow);
+    auto window = std::unique_ptr<SDL_Window, void (*)(SDL_Window*)>(nullptr, SDL_DestroyWindow);
 
     SDL_GLContext context;
 
@@ -31,6 +30,7 @@ void Start()
     std::unique_ptr<gl00::Engine> engine{ new gl00::Engine };
     gl00::SceneManager& mgr = gl00::SceneManager::GetInstance();
 
+    SDL_Log("Press F1 to Load 'Test Scene'\n");
     SDL_Event e;
 
     for (;;)
@@ -130,8 +130,6 @@ int main(int argc, char *argv[])
 {
 
     Start();
-
-    while (true) {}
 
     return 0;
 }

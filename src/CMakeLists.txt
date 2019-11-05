@@ -11,15 +11,15 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/state_solver.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/camera.cpp
 #	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
+#	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
 #	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.cpp
+#	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/blank.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
+#	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
 #	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
+#	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
 #	${CMAKE_CURRENT_SOURCE_DIR}/scenes/scattering_scene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/scenes/line_test.cpp
+#	${CMAKE_CURRENT_SOURCE_DIR}/scenes/line_test.cpp
 	PARENT_SCOPE
 )
 
