@@ -9,7 +9,7 @@ Only instructions for building on Windows are given.
 ### Windows
 
 This project is most easily built in Windows using
-(Vcpkg)[https://github.com/microsoft/vcpkg].
+[Vcpkg](https://github.com/microsoft/vcpkg).
 
 #### Vcpkg Build Example
 
