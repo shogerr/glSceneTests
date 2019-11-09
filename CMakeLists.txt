@@ -62,7 +62,10 @@ add_library(gl00-static
 
 add_library(gl00::gl00-static ALIAS gl00-static)
 
-target_include_directories(gl00-static PRIVATE ${gl00_SOURCE_DIR}/include)
+target_include_directories(gl00-static
+	PUBLIC
+	${gl00_SOURCE_DIR}/include
+	)
 
 # Change options if we are linking statically.
 if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
@@ -142,18 +145,46 @@ if(NOT VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
 			)
 	endif()
 	install(TARGETS gl00
+		EXPORT gl00Targets
 		RUNTIME DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
 		)
 endif()
 
 # Install the static libraries.
 install(TARGETS gl00-static
+	EXPORT gl00Targets
 	ARCHIVE DESTINATION lib
 	)
+
+install(EXPORT gl00Targets
+	FILE gl00Targets.cmake
+	NAMESPACE gl00::
+	DESTINATION lib/cmake/gl00
+	)
+
+#[[
+export(TARGETS gl00 gl00-static
+	NAMESPACE gl00::
+	FILE gl00Targets.cmake
+	)
+#]]
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+	${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
+	${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+	INSTALL_DESTINATION lib/cmake/gl00
+	)
+
+export(EXPORT gl00Targets
+	FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake
+	NAMESPACE gl00::
+	)
+set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
+export(PACKAGE gl00)
 
 # Debug Environment
 #print_target_properties(assimp::assimp)
 #print_target_properties(OpenGL::OpenGL)
 #print_target_properties(gl00)
 
-#dump_cmake_variables()
+dump_cmake_variables()
