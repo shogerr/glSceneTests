@@ -2,10 +2,16 @@ cmake_minimum_required (VERSION 3.15 FATAL_ERROR)
 
 project(gl00 LANGUAGES CXX)
 
-set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix"  FORCE)
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix" FORCE)
 
 # Set path to find local modules.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+
+option(STATIC_LINK "Statically link executable." OFF)
+
+if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
+	set(STATIC_LINK ON)
+endif()
 
 # Import some debugging functions.
 include(cmake/list_all_properties.cmake)
@@ -41,12 +47,17 @@ find_package(OpenGL REQUIRED)
 find_package(ZLIB)
 
 # Ensure glad source files are compiled.
-set_source_files_properties(src/glad.c PROPERTIES LANGUAGE CXX)
+#set_source_files_properties(src/glad.c PROPERTIES LANGUAGE CXX)
 
+# Add Glad
+add_subdirectory(${PROJECT_SOURCE_DIR}/glad)
+
+# Add Source Files
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/include)
+#add_subdirectory(${PROJECT_SOURCE_DIR}/include)
 
+# Add Applications
 add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
 
 #TODO: Add tests back in
@@ -59,94 +70,65 @@ add_library(gl00-static
 	STATIC
 	${SOURCE}
 	)
-
 add_library(gl00::gl00-static ALIAS gl00-static)
-
 target_include_directories(gl00-static
 	PUBLIC
 	${gl00_SOURCE_DIR}/include
 	)
-
-# Change options if we are linking statically.
-if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
-	# Build the .lib file for statically linked WIN32 applications.
-	# Use the suffix '-static' to differentiate the static library on Windows.
-	set_target_properties(gl00-static PROPERTIES
-		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-		DEBUG_POSTFIX d
-		)
-	target_link_libraries(gl00-static
-		PUBLIC
-		assimp::assimp
+set_target_properties(gl00-static PROPERTIES
+	DEBUG_POSTFIX d
+	#TODO Should be -static with gcc
+	MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>
+	OUTPUT_NAME $<IF:$<BOOL:${STATIC_LINK}>,gl00-static,gl00>
+	)
+target_link_libraries(gl00-static
+	PRIVATE
+		glad
+	PUBLIC
 		OpenGL::GL
-		ZLIB::ZLIB
-		${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib
-		)
-elseif(WIN32)
-	# Build the .lib file for the dynamically linked WIN32 applications.
-	set_target_properties(gl00-static PROPERTIES
-		OUTPUT_NAME gl00
-		DEBUG_POSTFIX d
-		)
-	target_link_libraries(gl00-static
-		PUBLIC
-		assimp::assimp
-		OpenGL::GL
-		)
-else()
-	# Build the .a file for statically linked Linux applications.
-	set_target_properties(gl00-static PROPERTIES
-		OUTPUT_NAME gl00
-		DEBUG_POSTFIX d
-		)
-	target_link_libraries(gl00-static
-		PUBLIC
-		${assimp_LIBRARIES}
-		OpenGL::GL
-		)
-endif()
+		$<IF:$<BOOL:${UNIX}>,${assimp_LIBRARY},assimp::assimp>
+		$<$<BOOL:${STATIC_LINK}>:ZLIB::ZLIB>
+		$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
+	)
 
 ##
 ## GL00 Runtime Library
 ##
-if(NOT VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
+if(NOT ${STATIC_LINK})
 	add_library(gl00
 		SHARED
 		${SOURCE}
 		)
+	add_library(gl00::gl00 ALIAS gl00)
 	set_target_properties(gl00 PROPERTIES
 		DEBUG_POSTFIX d
 		)
 	target_include_directories(gl00
 		PRIVATE ${gl00_SOURCE_DIR}/include
 		)
-	if(UNIX)
-		target_link_libraries(gl00
-			PUBLIC
-			${assimp_LIBRARY}
-			GLEW::GLEW
+	target_link_libraries(gl00
+		PRIVATE
+			glad
+		PUBLIC
+			$<IF:$<BOOL:${UNIX}>,${assimp_LIBRARY},assimp::assimp>
+			$<$<BOOL:${UNIX}>:GLEW::GLEW>
 			OpenGL::GL
-			)
-	elseif(WIN32)
-		target_link_libraries(gl00
-			PUBLIC
-			assimp::assimp
-			OpenGL::GL
-			)
-		# Install all of the runtime components.
-		install(FILES $<TARGET_FILE:SDL2::SDL2>
-			DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
-			)
-		install(FILES $<TARGET_FILE:assimp::assimp>
-			DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
-			)
-		install(FILES $<TARGET_FILE_DIR:gl00>/zlib$<$<CONFIG:Debug>:d>1.dll
-			DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
-			)
-	endif()
+		)
+
+	# Install all of the runtime components.
+	install(FILES $<TARGET_FILE:SDL2::SDL2>
+		DESTINATION bin/$<CONFIG>
+		)
+	install(FILES $<TARGET_FILE:assimp::assimp>
+		DESTINATION bin/$<CONFIG>
+		)
+	install(FILES $<TARGET_FILE_DIR:gl00>/zlib$<$<CONFIG:Debug>:d>1.dll
+		DESTINATION bin/$<CONFIG>
+		)
+
 	install(TARGETS gl00
 		EXPORT gl00Targets
-		RUNTIME DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+		RUNTIME DESTINATION bin/$<CONFIG>
 		)
 endif()
 
@@ -162,12 +144,6 @@ install(EXPORT gl00Targets
 	DESTINATION lib/cmake/gl00
 	)
 
-#[[
-export(TARGETS gl00 gl00-static
-	NAMESPACE gl00::
-	FILE gl00Targets.cmake
-	)
-#]]
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
 	${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
@@ -187,4 +163,4 @@ export(PACKAGE gl00)
 #print_target_properties(OpenGL::OpenGL)
 #print_target_properties(gl00)
 
-dump_cmake_variables()
+#dump_cmake_variables()

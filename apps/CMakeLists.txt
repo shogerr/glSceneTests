@@ -14,51 +14,32 @@ add_custom_command(TARGET renderer
 	${PROJECT_SOURCE_DIR}/assets $<TARGET_FILE_DIR:renderer>/assets
 	)
 target_include_directories(renderer
-	PRIVATE ${gl00_SOURCE_DIR}/include
+	PRIVATE ${PROJECT_SOURCE_DIR}/include
 	)
-if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
-	message("Static Triplet")
+
+if(MSVC)
 	set_target_properties(renderer PROPERTIES
-		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-		)
-	target_link_libraries(renderer
-		PRIVATE
-		gl00-static
-		assimp::assimp
-		OpenGL::GL
-		SDL2::SDL2-static
-		SDL2::SDL2main
-		ZLIB::ZLIB
-		${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib
-		)
-elseif(WIN32)
-	message("Win32 Build")
-	target_link_libraries(renderer
-		PRIVATE
-		gl00
-		assimp::assimp
-		OpenGL::GL
-		SDL2::SDL2-static
-		SDL2::SDL2main
-		)
-else()
-	message("Unix Build")
-	target_link_libraries(renderer
-		PUBLIC
-		gl00
-		OpenGL::OpenGL
-		SDL2::SDL2
-		SDL2::SDL2main
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>"
 		)
 endif()
 
+target_link_libraries(renderer
+	PRIVATE
+		glad
+		$<IF:$<BOOL:${STATIC_LINK}>,gl00-static,gl00>
+		$<IF:$<BOOL:${STATIC_LINK}>,SDL2::SDL2-static,SDL2::SDL2>
+		SDL2::SDL2main
+		$<$<BOOL:${STATIC_LINK}>:ZLIB::ZLIB>
+		$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
+	)
+
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/assets
-	DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+	DESTINATION bin/$<CONFIG>
 	)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/shaders
-	DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+	DESTINATION bin/$<CONFIG>
 	)
 install(TARGETS renderer
-	RUNTIME DESTINATION bin/$<IF:$<CONFIG:Debug>,Debug,Release>
+	RUNTIME DESTINATION bin/$<CONFIG>
 	)
 

@@ -1,9 +1,5 @@
-.vs/
-.vscode/
+glad/
 
-libraries/
-
-build/
 build*/
 
 bin/
@@ -11,5 +7,3 @@ lib/
 
 *.zip
 *.exe
-
-CMakeSettings.json
