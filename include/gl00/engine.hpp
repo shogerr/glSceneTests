@@ -30,7 +30,6 @@ namespace gl00
         void KillContext();
         void KillGlObjects();
 
-
         std::unique_ptr<gl00::Scene> default_scene_;
     };
 }

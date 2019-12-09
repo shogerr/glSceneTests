@@ -2,6 +2,7 @@ add_executable(renderer
 	test_app/app.cpp
 	../src/sdl/sdl_helper.cpp
 	../src/scenes/instance_test.cpp
+	../src/scenes/test_signal.cpp
 	)
 add_custom_command(TARGET renderer
 	PRE_BUILD
@@ -16,13 +17,10 @@ add_custom_command(TARGET renderer
 target_include_directories(renderer
 	PRIVATE ${PROJECT_SOURCE_DIR}/include
 	)
-
-if(MSVC)
-	set_target_properties(renderer PROPERTIES
-		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>"
-		)
-endif()
-
+set_target_properties(renderer PROPERTIES
+	OUTPUT_NAME $<IF:$<BOOL:${STATIC_LINK}>,renderer-static,renderer>
+	$<<BOOL:${MSVC}>:MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>>
+	)
 target_link_libraries(renderer
 	PRIVATE
 		glad
@@ -33,11 +31,12 @@ target_link_libraries(renderer
 		$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
 	)
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/assets
-	DESTINATION bin/$<CONFIG>
-	)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/shaders
-	DESTINATION bin/$<CONFIG>
+install(
+	DIRECTORY
+		${PROJECT_SOURCE_DIR}/assets
+		${PROJECT_SOURCE_DIR}/src/shaders
+	DESTINATION
+		bin/$<CONFIG>
 	)
 install(TARGETS renderer
 	RUNTIME DESTINATION bin/$<CONFIG>

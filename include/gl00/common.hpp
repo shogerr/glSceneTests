@@ -5,9 +5,9 @@
 #endif
 
 #if defined(__linux__)
-#include <GL/glew.h>
+ #include <GL/glew.h>
 #else
-#include <glad/glad.h>
+ #include <glad/glad.h>
 #endif
 
 #define GLM_ENABLE_EXPIREMENTAL

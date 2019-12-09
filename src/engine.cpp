@@ -1,6 +1,5 @@
-#include <gl00/engine.hpp>
-
 #include <gl00/common.hpp>
+#include <gl00/engine.hpp>
 #include <gl00/scene_manager.hpp>
 
 #include "scenes/blank.hpp"

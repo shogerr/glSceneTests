@@ -13,6 +13,9 @@ if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
 	set(STATIC_LINK ON)
 endif()
 
+# Create compile commands with Build.Ninja.
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Import some debugging functions.
 include(cmake/list_all_properties.cmake)
 include(cmake/list_all_variables.cmake)
@@ -26,7 +29,7 @@ if(MSVC)
 	# Use /std:c++latest
 	msvc_use_cpp_lastest()
 	# Force the console in Windows.
-	set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
+	#set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
 else()
 	set(CMAKE_CXX_STANDARD 17)
 endif()
@@ -52,16 +55,17 @@ find_package(ZLIB)
 # Add Glad
 add_subdirectory(${PROJECT_SOURCE_DIR}/glad)
 
-# Add Source Files
+# Variable SOURCE for source files.
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 
-#add_subdirectory(${PROJECT_SOURCE_DIR}/include)
+# Variable HEADERS for headers.
+add_subdirectory(${PROJECT_SOURCE_DIR}/include)
 
 # Add Applications
 add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
 
 #TODO: Add tests back in
-#add_subdirectory(tests)
+#add_subdirectory(test)
 
 ##
 ## GL00 Static Library
@@ -73,16 +77,17 @@ add_library(gl00-static
 add_library(gl00::gl00-static ALIAS gl00-static)
 target_include_directories(gl00-static
 	PUBLIC
-	${gl00_SOURCE_DIR}/include
+		${gl00_SOURCE_DIR}/include
 	)
 set_target_properties(gl00-static PROPERTIES
 	DEBUG_POSTFIX d
-	#TODO Should be -static with gcc
-	MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>
 	OUTPUT_NAME $<IF:$<BOOL:${STATIC_LINK}>,gl00-static,gl00>
+	#TODO Should be -static with gcc
+	$<<BOOL:${MSVC}>:MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>>
 	)
 target_link_libraries(gl00-static
 	PRIVATE
+		$<$<BOOL:${MSVC}>:-subsystem:console>
 		glad
 	PUBLIC
 		OpenGL::GL
@@ -104,27 +109,28 @@ if(NOT ${STATIC_LINK})
 		DEBUG_POSTFIX d
 		)
 	target_include_directories(gl00
-		PRIVATE ${gl00_SOURCE_DIR}/include
+		PUBLIC ${gl00_SOURCE_DIR}/include
 		)
 	target_link_libraries(gl00
 		PRIVATE
+			"$<$<BOOL:${MSVC}>:-subsystem:console>"
 			glad
 		PUBLIC
 			$<IF:$<BOOL:${UNIX}>,${assimp_LIBRARY},assimp::assimp>
 			$<$<BOOL:${UNIX}>:GLEW::GLEW>
 			OpenGL::GL
 		)
-
 	# Install all of the runtime components.
-	install(FILES $<TARGET_FILE:SDL2::SDL2>
-		DESTINATION bin/$<CONFIG>
-		)
-	install(FILES $<TARGET_FILE:assimp::assimp>
-		DESTINATION bin/$<CONFIG>
-		)
-	install(FILES $<TARGET_FILE_DIR:gl00>/zlib$<$<CONFIG:Debug>:d>1.dll
-		DESTINATION bin/$<CONFIG>
-		)
+	if(WIN32)
+		install(
+			FILES
+				$<TARGET_FILE:SDL2::SDL2>
+				$<TARGET_FILE:assimp::assimp>
+				$<$<CONFIG:Debug>:$<TARGET_FILE_DIR:gl00>/zlibd1.dll>
+			DESTINATION
+				bin/$<CONFIG>
+			)
+	endif()
 
 	install(TARGETS gl00
 		EXPORT gl00Targets
@@ -145,6 +151,7 @@ install(EXPORT gl00Targets
 	)
 
 include(CMakePackageConfigHelpers)
+
 configure_package_config_file(
 	${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
 	${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
@@ -155,7 +162,9 @@ export(EXPORT gl00Targets
 	FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake
 	NAMESPACE gl00::
 	)
+
 set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
+
 export(PACKAGE gl00)
 
 # Debug Environment

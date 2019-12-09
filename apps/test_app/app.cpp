@@ -5,6 +5,7 @@
 #include "../src/sdl/sdl_helper.hpp"
 
 #include "../src/scenes/instance_test.hpp"
+#include "../src/scenes/test_signal.hpp"
 
 constexpr auto WIDTH = 768;
 constexpr auto HEIGHT = 768;
@@ -55,6 +56,7 @@ void Start()
                     mgr.RequestNewScene(std::unique_ptr<gl00::Scene> {new gl00::scenes::InstanceTest});
                     break;
                 case SDLK_F2:
+                    mgr.RequestNewScene(std::unique_ptr<gl00::Scene> {new gl00::scenes::TestSignal});
                     //                    mgr->RequestNewScene(new ShaderScene);
                     break;
                 case SDLK_F3:

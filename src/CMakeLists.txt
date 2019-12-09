@@ -11,7 +11,7 @@ set(SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/gizmos/camera.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/blank.cpp
 	PARENT_SCOPE
-    )
+	)
 
 set(HEADERS
 	${HEADERS}
@@ -28,18 +28,18 @@ set(HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/scattering_scene.hpp
 	PARENT_SCOPE
-    )
+	)
 
 set(SCENES_SOURCE
-    ${SCENES_SOURCE}
+	${SCENES_SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/ball_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/bezier_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/instance_test.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/lighting_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/line_test.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/scenes/scattering_scene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/scenes/scattering_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/shader_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/test_scene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/scenes/texture_scene.cpp
-    PARENT_SCOPE
-    )
+	PARENT_SCOPE
+	)
