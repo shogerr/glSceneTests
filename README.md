@@ -20,12 +20,13 @@ dynamically linked executable.
 ```
 vcpkg install assimp:x64-windows \
               sdl2:x64-windows \
-              glm:x64-windows
+              glm:x64-windows \
+              stb:x64-windows
 ```
 
 ##### Generate Build Configuration
 ```
-cmake -A x64 -B build -S . -DCMAKE_TOOLCHAIN_FILE="C:\path\to\vcpkg\scipts\buildsystems\vcpkg.cmake"
+cmake -A x64 -B build -S . -DCMAKE_TARGET_TRIPLE="x64-windows" -DCMAKE_TOOLCHAIN_FILE="C:\path\to\vcpkg\scipts\buildsystems\vcpkg.cmake"
 ```
 
 ##### Build Project

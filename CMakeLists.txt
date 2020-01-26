@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.15 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.16 FATAL_ERROR)
 
 project(gl00 LANGUAGES CXX)
 
@@ -7,7 +7,7 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix" FORCE)
 # Set path to find local modules.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
-option(STATIC_LINK "Statically link executable." OFF)
+option(STATIC_LINK "Statically link executable." ON)
 
 if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
 	set(STATIC_LINK ON)
@@ -15,6 +15,8 @@ endif()
 
 # Create compile commands with Build.Ninja.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include(GenerateExportHeader)
 
 # Import some debugging functions.
 include(cmake/list_all_properties.cmake)
@@ -24,10 +26,11 @@ include(cmake/list_all_variables.cmake)
 include(cmake/msvc_cpp_latest.cmake)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
 
 if(MSVC)
 	# Use /std:c++latest
-	msvc_use_cpp_lastest()
+	#msvc_use_cpp_lastest()
 	# Force the console in Windows.
 	#set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
 else()
@@ -61,8 +64,10 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 # Variable HEADERS for headers.
 add_subdirectory(${PROJECT_SOURCE_DIR}/include)
 
-# Add Applications
-add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
+# Add Examples & Applications
+if (${BUILD_EXAMPLES})
+	add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
+endif()
 
 #TODO: Add tests back in
 #add_subdirectory(test)
@@ -70,36 +75,39 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
 ##
 ## GL00 Static Library
 ##
-add_library(gl00-static
-	STATIC
-	${SOURCE}
-	)
-add_library(gl00::gl00-static ALIAS gl00-static)
-target_include_directories(gl00-static
-	PUBLIC
-		${gl00_SOURCE_DIR}/include
-	)
-set_target_properties(gl00-static PROPERTIES
-	DEBUG_POSTFIX d
-	OUTPUT_NAME $<IF:$<BOOL:${STATIC_LINK}>,gl00-static,gl00>
-	#TODO Should be -static with gcc
-	$<<BOOL:${MSVC}>:MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>>
-	)
-target_link_libraries(gl00-static
-	PRIVATE
-		$<$<BOOL:${MSVC}>:-subsystem:console>
-		glad
-	PUBLIC
-		OpenGL::GL
-		$<IF:$<BOOL:${UNIX}>,${assimp_LIBRARY},assimp::assimp>
-		$<$<BOOL:${STATIC_LINK}>:ZLIB::ZLIB>
-		$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
-	)
-
+if(${STATIC_LINK})
+	add_library(gl00-static
+		STATIC
+		${SOURCE}
+		)
+	add_library(gl00::gl00-static ALIAS gl00-static)
+	target_include_directories(gl00-static
+		PUBLIC
+			${gl00_SOURCE_DIR}/include
+		)
+	set_target_properties(gl00-static PROPERTIES
+		DEBUG_POSTFIX d
+		#OUTPUT_NAME $<IF:$<BOOL:${STATIC_LINK}>,gl00-static,gl00>
+		OUTPUT_NAME gl00
+		#TODO Should be -static with gcc
+		#TODO Using the same code for static and shared?
+		$<<BOOL:${MSVC}>:MSVC_RUNTIME_LIBRARY MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<BOOL:${STATIC_LINK}>>:DLL>>
+		)
+	target_link_libraries(gl00-static
+		PRIVATE
+			$<$<BOOL:${MSVC}>:-subsystem:console>
+			glad
+		PUBLIC
+			OpenGL::GL
+			$<IF:$<BOOL:${UNIX}>,${assimp_LIBRARY},assimp::assimp>
+			$<$<BOOL:${STATIC_LINK}>:ZLIB::ZLIB>
+			$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
+		)
+else()
+#TODO Export symbols (generate_export_header) for a shared library in windows.
 ##
 ## GL00 Runtime Library
 ##
-if(NOT ${STATIC_LINK})
 	add_library(gl00
 		SHARED
 		${SOURCE}
@@ -132,17 +140,24 @@ if(NOT ${STATIC_LINK})
 			)
 	endif()
 
+	generate_export_header(gl00
+		BASE_NAME gl00
+		EXPORT_MACRO_NAME gl00_EXPORT
+	)
+
 	install(TARGETS gl00
 		EXPORT gl00Targets
 		RUNTIME DESTINATION bin/$<CONFIG>
 		)
 endif()
 
-# Install the static libraries.
-install(TARGETS gl00-static
-	EXPORT gl00Targets
-	ARCHIVE DESTINATION lib
-	)
+if(${STATIC_LINK})
+	# Install the static libraries.
+	install(TARGETS gl00-static
+		EXPORT gl00Targets
+		ARCHIVE DESTINATION lib
+		)
+endif()
 
 install(EXPORT gl00Targets
 	FILE gl00Targets.cmake
