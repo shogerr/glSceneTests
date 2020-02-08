@@ -4,8 +4,21 @@
 
 gl00::Shader::Shader() : program_(0) {}
 
+gl00::Shader::Shader(std::vector<std::pair<GLenum, std::filesystem::path>>& shader_source_paths)
+{
+    std::vector<std::pair<GLenum, std::string>> shaders;
+    for (auto& s : shader_source_paths)
+    {
+        std::string source = LoadShader(std::filesystem::absolute(s.second).string());
+        shaders.push_back(std::pair<GLenum, std::string>{s.first, source});
+    }
+
+    program_ = CreateProgram(shaders);
+}
+
 gl00::Shader::Shader(std::vector<std::pair<GLenum, std::string>>& shaders)
 {
+#pragma message("This constructor will no longer open files in the future.")
     for (auto &s : shaders)
     {
         std::string source = LoadShader(s.second);
@@ -60,7 +73,8 @@ static const void gl00::_PrintProgramLog(GLuint program)
 
 static const void gl00::_PrintShaderLog(GLuint shader)
 {
-    if (glIsShader(shader)) {
+    if (glIsShader(shader))
+    {
         int infoLogLength = 0;
         int maxLength = infoLogLength;
 
@@ -72,20 +86,20 @@ static const void gl00::_PrintShaderLog(GLuint shader)
 
         if (infoLogLength > 0)
         {
-            LOGE("%s\n", infoLog);
+            LOGI("%s\n", infoLog);
         }
         else
         {
-            LOGE("Not a shader\n");
+            LOGE("Not a shader.\n");
         }
 
         delete[] infoLog;
     }
 }
 
-std::string gl00::Shader::LoadShader(const std::string& fileName) {
+std::string gl00::Shader::LoadShader(const std::string& file_name) {
     std::ifstream file;
-    file.open((fileName).c_str());
+    file.open((file_name).c_str());
 
     std::string output;
     std::string line;
@@ -100,35 +114,71 @@ std::string gl00::Shader::LoadShader(const std::string& fileName) {
     }
     else
     {
-        LOGE("ERROR : Failed to load shader");
+        LOGE("Failed to load shader: %s\n", file_name.c_str());
     }
 
     file.close();
     return output;
 }
 
-GLuint gl00::Shader::CreateProgram(std::vector<std::pair<GLenum, std::string>>& shaderSources) {
+GLuint gl00::Shader::CreateProgram(std::pair<GLenum, std::string> & source)
+{
+    GLuint program = 0;
+    GLint linked = GL_FALSE;
+    GLuint shader = CompileShader(source.second.c_str(), source.first);
+    program = glCreateProgram();
+    if (!program)
+    {
+        LOGE("Program failed to create.");
+        CheckGlError("glCreateProgram");
+        goto exit;
+    }
+    glAttachShader(program, shader);
+
+    glLinkProgram(program);
+
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+
+    if (linked == GL_FALSE)
+    {
+        gl00::_PrintProgramLog(program);
+        program = 0;
+    }
+exit:
+    glDeleteShader(shader);
+
+    return program;
+}
+
+GLuint gl00::Shader::CreateProgram(std::vector<std::pair<GLenum, std::string>> & shaderSources) {
     GLuint program = 0;
     std::vector<GLuint> shaders;
     GLint linked = GL_FALSE;
 
+    // Compile the list of shaders.
     for (auto s : shaderSources)
         shaders.push_back(CompileShader(s.second.c_str(), s.first));
 
     LOGI("Finished loading shaders.\n");
 
+    // Create the shader program.
     program = glCreateProgram();
+
     if (!program)
     {
-        LOGI("no program");
+        LOGE("Program failed to create.");
         CheckGlError("glCreateProgram");
         goto exit;
     }
 
+    // Attach each of the compiled shaders to the program.
     for (auto s : shaders)
         glAttachShader(program, s);
 
+    // Link the program.
     glLinkProgram(program);
+
+    // Check the program status.
     glGetProgramiv(program, GL_LINK_STATUS, &linked);
 
     if (linked == GL_FALSE)
@@ -137,6 +187,7 @@ GLuint gl00::Shader::CreateProgram(std::vector<std::pair<GLenum, std::string>>& 
         program = 0;
     }
 
+// Skip linking the program if there is an error.
 exit:
     for (auto s : shaders)
         glDeleteShader(s);

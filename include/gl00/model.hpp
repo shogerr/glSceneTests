@@ -27,7 +27,7 @@ namespace gl00
 
         void UpdateModel(glm::mat4 model);
         void UpdateModel(std::shared_ptr<glm::mat4[]> model);
-        void UpdateModel(std::vector<glm::mat4> &model);
+        void UpdateModel(std::vector<glm::mat4>& model);
 
         void SetInstanceCount(size_t i);
 

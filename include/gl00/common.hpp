@@ -1,7 +1,7 @@
 #pragma once
 
 #if defined(_WIN32)
-#include <windows.h>
+ #include <windows.h>
 #endif
 
 #if defined(__linux__)
@@ -13,27 +13,28 @@
 #define GLM_ENABLE_EXPIREMENTAL
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-
 #define GLM_FORCE_RADIANS
-#include <stdio.h>
 
 #include <chrono>
+#include <stdio.h>
 
 #define EPSILON 0.0000001f
 
 #ifdef NDEBUG
-#define LOGE(...) ( printf(__VA_ARGS__) )
-#define LOGI(...)
-#define LOGD(...)
+ #define LOGE(...) ( printf(__VA_ARGS__) )
+ #define LOGI(...)
+ #define LOGD(...)
 #else
-#define LOGE(...) ( printf(__VA_ARGS__) )
-#define LOGI(...) ( printf(__VA_ARGS__) )
-#define LOGD(...) ( printf(__VA_ARGS__) )
+ #define LOGE(...) do { printf("ERROR: "); printf(__VA_ARGS__); } while (0)
+ #define LOGI(...) do { printf("INFO: "); printf(__VA_ARGS__); } while (0)
+ #define LOGD(...) do { printf("DEBUG: "); printf(__VA_ARGS__); } while (0)
 #endif
 
 // Clean up a resource (delete and set to null).
-template<typename T> void CleanUp(T** pptr) {
-    if (*pptr) {
+template<typename T> void CleanUp(T** pptr)
+{
+    if (*pptr)
+    {
         delete *pptr;
         *pptr = NULL;
     }

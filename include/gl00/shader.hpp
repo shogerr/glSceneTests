@@ -3,6 +3,7 @@
 #include <gl00/common.hpp>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 namespace gl00
 {
@@ -10,12 +11,19 @@ namespace gl00
     {
     public:
         Shader();
-        Shader(std::vector<std::pair<GLenum, std::string>>& shaderFilenames);
+        Shader(std::vector<std::pair<GLenum, std::filesystem::path>>& shader_filenames);
+        Shader(std::vector<std::pair<GLenum, std::string>>& shader_filenames);
         ~Shader();
-        GLuint program_;
+        GLuint Program() { return program_; }
     private:
+        GLuint program_;
+        // Returns the string read from a file.
         std::string LoadShader(const std::string& filename);
+
+        // Methods for returning a compiled & linked shader program.
+        GLuint CreateProgram(std::pair<GLenum, std::string>& shaders);
         GLuint CreateProgram(std::vector<std::pair<GLenum, std::string>>& shaders);
+
         GLuint CompileShader(const std::string& text, GLenum shaderType);
     };
 

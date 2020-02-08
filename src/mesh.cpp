@@ -22,9 +22,9 @@ void gl00::Mesh::Draw(gl00::Shader& shader)
         glActiveTexture(GL_TEXTURE0 + i);
 
         if (i%2 == 0)
-            glProgramUniform1i(shader.program_, 4, i);
+            glProgramUniform1i(shader.Program(), 4, i);
         else
-            glProgramUniform1i(shader.program_, 5, i);
+            glProgramUniform1i(shader.Program(), 5, i);
 
         glBindTexture(GL_TEXTURE_2D, textures_[i].id);
     }

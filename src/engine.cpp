@@ -9,7 +9,7 @@ static const void _logOpenGlError(GLenum err)
     switch (err)
     {
     case GL_NO_ERROR:
-        LOGE("OpenGL OK!\n");
+        LOGI("OpenGL OK!\n");
         break;
 
     default:
@@ -18,21 +18,18 @@ static const void _logOpenGlError(GLenum err)
     }
 }
 
-gl00::Engine::Engine() : first_frame_(true), has_globjects_(false), window_width_(512), window_height_(512)
+gl00::Engine::Engine() : Engine(512, 512) {}
+
+gl00::Engine::Engine(int width, int height)
+    : first_frame_(true)
+    , has_globjects_(false)
+    , window_width_(width), window_height_(height)
 {
     default_scene_ = std::make_unique<gl00::scenes::Blank>();
     LOGI("Engine on.\n");
 }
 
-gl00::Engine::~Engine()
-{
-}
-
-gl00::Engine& gl00::Engine::GetInstance()
-{
-    static gl00::Engine instance;
-    return instance;
-}
+gl00::Engine::~Engine() {}
 
 void gl00::Engine::SetScreenDimensions(int width, int height)
 {

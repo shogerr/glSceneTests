@@ -28,11 +28,19 @@ void Start()
 
     int width, height = 0;
 
-    std::unique_ptr<gl00::Engine> engine{ new gl00::Engine };
+
+    //gl00::Engine& eng = gl00::Engine::GetInstance();
+    //eng.SetDefaultScene(std::make_unique<gl00::scenes::InstanceTest>());
+
+    // Create the engine
+    std::unique_ptr<gl00::Engine> engine{new gl00::Engine()};
+    // Set the default scene.
+    engine.get()->SetDefaultScene(std::make_unique<gl00::scenes::InstanceTest>());
+
     gl00::SceneManager& mgr = gl00::SceneManager::GetInstance();
 
     SDL_Log("Press F1 to Load 'Test Scene'\n");
-    SDL_Event e;
+    static SDL_Event e;
 
     for (;;)
     {
@@ -48,6 +56,12 @@ void Start()
             {
             case SDL_MOUSEMOTION:
                 mgr.UpdateMouseMotion((float)e.motion.x / width, (float)e.motion.y / height);
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                SDL_Log("Down: %d\n", e.button.button);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                SDL_Log("Up: %d\n", e.button.button);
                 break;
             case SDL_KEYDOWN:
                 switch (e.key.keysym.sym)
@@ -118,6 +132,7 @@ void Start()
         }
 
     draw:
+        //eng.DoFrame();
         engine->DoFrame();
         SDL_GL_SwapWindow(window.get());
     }

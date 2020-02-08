@@ -8,6 +8,7 @@ namespace gl00
     class Engine {
     public:
         Engine();
+        Engine(int width, int height);
         ~Engine();
 
         void DoFrame();

@@ -8,6 +8,7 @@ set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR} CACHE PATH "cmake prefix" FORCE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
 option(STATIC_LINK "Statically link executable." ON)
+option(BUILD_EXAMPLES "Build the library examples." TRUE)
 
 if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
 	set(STATIC_LINK ON)
@@ -26,25 +27,14 @@ include(cmake/list_all_variables.cmake)
 include(cmake/msvc_cpp_latest.cmake)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 17)
-
-if(MSVC)
-	# Use /std:c++latest
-	#msvc_use_cpp_lastest()
-	# Force the console in Windows.
-	#set("${CMAKE_EXE_LINKER_FLAGS} /subsystem:console /NODEFAULTLIB:MSVCRT")
-else()
-	set(CMAKE_CXX_STANDARD 17)
-endif()
+set(CMAKE_CXX_STANDARD 20)
 
 if(UNIX)
-	find_package(SDL2 REQUIRED)
 	find_package(assimp REQUIRED)
 	find_package(glm REQUIRED)
 	find_package(GLEW)
 	include_directories(${GLEW_INCLUDE_DIRS})
 else()
-	find_package(SDL2 CONFIG REQUIRED)
 	find_package(assimp CONFIG REQUIRED)
 	find_package(glm CONFIG REQUIRED)
 endif()
@@ -66,7 +56,14 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/include)
 
 # Add Examples & Applications
 if (${BUILD_EXAMPLES})
-	add_subdirectory(${PROJECT_SOURCE_DIR}/apps)
+	if(UNIX)
+		find_package(SDL2 REQUIRED)
+	else()
+		find_package(SDL2 CONFIG REQUIRED)
+	endif()
+
+	add_subdirectory(${PROJECT_SOURCE_DIR}/apps/test_app)
+	add_subdirectory(${PROJECT_SOURCE_DIR}/apps/example_app)
 endif()
 
 #TODO: Add tests back in
@@ -102,6 +99,11 @@ if(${STATIC_LINK})
 			$<IF:$<BOOL:${UNIX}>,${assimp_LIBRARY},assimp::assimp>
 			$<$<BOOL:${STATIC_LINK}>:ZLIB::ZLIB>
 			$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
+		)
+
+	install(TARGETS gl00-static
+		EXPORT gl00Targets
+		RUNTIME DESTINATION lib
 		)
 else()
 #TODO Export symbols (generate_export_header) for a shared library in windows.
@@ -148,14 +150,6 @@ else()
 	install(TARGETS gl00
 		EXPORT gl00Targets
 		RUNTIME DESTINATION bin/$<CONFIG>
-		)
-endif()
-
-if(${STATIC_LINK})
-	# Install the static libraries.
-	install(TARGETS gl00-static
-		EXPORT gl00Targets
-		ARCHIVE DESTINATION lib
 		)
 endif()
 
