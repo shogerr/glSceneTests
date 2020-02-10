@@ -1,14 +1,17 @@
 #ifndef __BALL_SCENE_HPP
 #define __BALL_SCENE_HPP
 
+#include "ground_scene.hpp"
 #include <gl00/engine_parts.hpp>
-#include <gl00/scene_object.hpp>
+#include <gl00/gizmos/scene_object.hpp>
 #include <gl00/camera.hpp>
-#include "../gizmos/lighting.hpp"
+#include "../../src/gizmos/lighting.hpp"
+#include <memory>
 
-class BallScene : public gl00::Scene
+class GroundScene : public gl00::Scene
 {
 public:
+    GroundScene();
     virtual void OnStartGraphics();
     virtual void DoFrame();
     virtual void Step();
@@ -34,14 +37,15 @@ private:
     glm::vec3 target_;
 
     gl00::Model* scene_model_;
-    gl00::Model* obstacle_model_;
+    std::unique_ptr<gl00::Model> obstacle_model_;
     gl00::Model* light_model_;
 
-    glm::mat4* p_obstacle_model;
+    std::shared_ptr<glm::mat4[]> p_obstacle_model;
     glm::mat4* p_light_model_;
-    glm::mat4* p_scene_model_;
+    std::unique_ptr<glm::mat4> p_scene_model_;
     
-    gl00::SceneObject<gl00::Model*>* figure_;
+    gl00::StateSolver figure_solver_;
+
     std::vector<gl00::StateSolver> obstacles_;
 
     glm::mat4 ground_plane_model_;

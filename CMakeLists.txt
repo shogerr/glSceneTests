@@ -9,6 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
 option(STATIC_LINK "Statically link executable." ON)
 option(BUILD_EXAMPLES "Build the library examples." TRUE)
+option(BUILD_TESTS "Build the tests." TRUE)
 
 if(VCPKG_TARGET_TRIPLET MATCHES x64-windows-static)
 	set(STATIC_LINK ON)
@@ -22,9 +23,6 @@ include(GenerateExportHeader)
 # Import some debugging functions.
 include(cmake/list_all_properties.cmake)
 include(cmake/list_all_variables.cmake)
-
-# Macro for setting cpp standard in MSVC.
-include(cmake/msvc_cpp_latest.cmake)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -54,7 +52,9 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src)
 # Variable HEADERS for headers.
 add_subdirectory(${PROJECT_SOURCE_DIR}/include)
 
-# Add Examples & Applications
+##
+## Examples & Applications
+##
 if (${BUILD_EXAMPLES})
 	if(UNIX)
 		find_package(SDL2 REQUIRED)
@@ -66,8 +66,12 @@ if (${BUILD_EXAMPLES})
 	add_subdirectory(${PROJECT_SOURCE_DIR}/apps/example_app)
 endif()
 
-#TODO: Add tests back in
-#add_subdirectory(test)
+##
+## Tests
+##
+if (${BUILD_TESTS})
+	add_subdirectory(${PROJECT_SOURCE_DIR}/test/unit)
+endif()
 
 ##
 ## GL00 Static Library
@@ -106,10 +110,14 @@ if(${STATIC_LINK})
 		RUNTIME DESTINATION lib
 		)
 else()
-#TODO Export symbols (generate_export_header) for a shared library in windows.
+
 ##
 ## GL00 Runtime Library
 ##
+
+# TODO To build dynamic libraries, elements will need to be marked as exported.
+# NOTE Export symbols (generate_export_header) for a shared library in windows.
+
 	add_library(gl00
 		SHARED
 		${SOURCE}

@@ -26,7 +26,7 @@ gl00::Engine::Engine(int width, int height)
     , window_width_(width), window_height_(height)
 {
     default_scene_ = std::make_unique<gl00::scenes::Blank>();
-    LOGI("Engine on.\n");
+    LOGD("Engine on.\n");
 }
 
 gl00::Engine::~Engine() {}
@@ -44,7 +44,7 @@ void gl00::Engine::SetScreenDimensions(int width, int height)
 
 void gl00::Engine::ConfigureOpenGL()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.25f, 0.25f, 0.25f, 0.f);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
@@ -68,14 +68,11 @@ void gl00::Engine::KillGlObjects()
 
 bool gl00::Engine::PreRender()
 {
-    do
+    if (!has_globjects_)
     {
-        if (!has_globjects_)
-        {
-           if (!InitGLObjects())
-                return false;
-        }
-    } while (0);
+        if (!InitGLObjects())
+            return false;
+    }
 
     ConfigureOpenGL();
     return true;
@@ -109,7 +106,7 @@ bool gl00::Engine::InitGLObjects()
 {
     if (!has_globjects_)
     {
-        LOGI("Initializing GL objects...\n");
+        LOGD("Initializing GL objects...\n");
         SceneManager& mgr = SceneManager::GetInstance();
         mgr.StartGraphics();
         _logOpenGlError(glGetError());

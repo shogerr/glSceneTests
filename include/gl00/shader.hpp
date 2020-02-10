@@ -7,12 +7,19 @@
 
 namespace gl00
 {
+    using shader_source = std::pair <GLenum, std::string>;
+    using shader_path = std::pair <GLenum, std::filesystem::path>;
+    using shader_sources = std::vector<std::pair <GLenum, std::string>>;
+    using shader_paths = std::vector<std::pair <GLenum, std::filesystem::path>>;
+
     class Shader
     {
     public:
+
         Shader();
-        Shader(std::vector<std::pair<GLenum, std::filesystem::path>>& shader_filenames);
-        Shader(std::vector<std::pair<GLenum, std::string>>& shader_filenames);
+        //Shader(GLenum type, std::filesystem::path& path);
+        Shader(shader_paths& shader_filenames);
+        Shader(shader_sources& shader_filenames);
         ~Shader();
         GLuint Program() { return program_; }
     private:
@@ -21,8 +28,8 @@ namespace gl00
         std::string LoadShader(const std::string& filename);
 
         // Methods for returning a compiled & linked shader program.
-        GLuint CreateProgram(std::pair<GLenum, std::string>& shaders);
-        GLuint CreateProgram(std::vector<std::pair<GLenum, std::string>>& shaders);
+        GLuint CreateProgram(shader_source& shaders);
+        GLuint CreateProgram(shader_sources& shaders);
 
         GLuint CompileShader(const std::string& text, GLenum shaderType);
     };

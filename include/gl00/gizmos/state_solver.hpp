@@ -10,12 +10,12 @@ namespace gl00
     public:
         struct State
         {
-            glm::vec3 position;
-            glm::vec3 velocity;
-            glm::vec3 theta;
-            glm::vec3 omega;
-            float mass;
-            float time;
+            glm::vec3 position {0.f, 0.f, 0.f};
+            glm::vec3 velocity {0.f, 0.f, 0.f};
+            glm::vec3 theta {0.f, 0.f, 0.f};
+            glm::vec3 omega {0.f, 0.f, 0.f};
+            float mass {0.f};
+            float time {0.f};
         };
 
         struct Derivative
@@ -28,11 +28,13 @@ namespace gl00
 
         StateSolver();
         StateSolver(glm::vec3 position);
+        StateSolver(glm::vec3 position, glm::vec3 theta);
 
         void CalcDerivative(const struct State &state, struct Derivative &derivative);
         void Simulate(float dt);
 
         glm::vec3 force_;
+        glm::vec3 force_angular_;
         struct State state_;
     };
 }

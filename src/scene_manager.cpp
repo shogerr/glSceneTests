@@ -71,6 +71,8 @@ void gl00::SceneManager::Poke(unsigned int i)
 void gl00::SceneManager::UpdateMouseMotion(float x, float y)
 {
     current_scene_->OnMouseMotion(x, y);
+    last_mouse_coords_.x = x;
+    last_mouse_coords_.y = y;
 }
 
 void gl00::SceneManager::UpdateJoy(float x, float y)
@@ -98,9 +100,7 @@ float gl00::SceneManager::GetScreenAspect()
 void gl00::SceneManager::DoFrame()
 {
     if (scene_to_install_)
-    {
         InstallScene(std::move(scene_to_install_));
-    }
 
     if (has_graphics_ && current_scene_)
         current_scene_->DoFrame();

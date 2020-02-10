@@ -1,6 +1,7 @@
 #ifndef __MODEL_HPP
 #define __MODEL_HPP
 
+#include <filesystem>
 #include <string>
 #include <vector>
 #include <memory>
@@ -12,7 +13,7 @@
 
 namespace gl00
 {
-    GLuint TextureFromFile(const char* path, std::string directory);
+    GLuint static TextureFromFile(const char* path, std::string directory);
 
     //class Shader;
 
@@ -31,7 +32,7 @@ namespace gl00
 
         void SetInstanceCount(size_t i);
 
-        gl00::Mesh & GetMesh(size_t index);
+        gl00::Mesh& GetMesh(size_t index);
     private:
         size_t instance_count_;
 
@@ -39,12 +40,12 @@ namespace gl00
 
         std::vector<gl00::Mesh::Texture> loaded_textures_;
 
-        std::string model_directory_;
+        std::filesystem::path model_directory_;
 
         // Model matrix applied to all meshes held by model.
         std::shared_ptr<glm::mat4[]> model_;
 
-        void LoadModel(std::string& path);
+        void LoadModel(std::filesystem::path& path);
 
         void ProcessNode(aiNode *node, const aiScene *scene);
 

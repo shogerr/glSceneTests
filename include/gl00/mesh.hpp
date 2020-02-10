@@ -1,6 +1,7 @@
 #ifndef __MESH_HPP
 #define __MESH_HPP
 
+#include <filesystem>
 #include <vector>
 #include <string>
 
@@ -25,7 +26,7 @@ namespace gl00
         {
             GLuint id;
             std::string type;
-            aiString path;
+            std::filesystem::path path;
         };
 
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures, size_t num_instances = 1);

@@ -10,9 +10,9 @@
 gl00::Model::Model(std::string path, size_t instance_count)
 {
     instance_count_ = instance_count;
-    LoadModel(path);
+    LoadModel(std::filesystem::path(path));
 
-    LOGI("Loaded model.\n");
+    LOGD("Loaded model.\n");
     model_ = std::shared_ptr<glm::mat4[]>{ new glm::mat4[instance_count_] };
     for (int i = 0; i < instance_count_; i++)
         model_.get()[i] = glm::mat4(1.f);
@@ -26,7 +26,6 @@ gl00::Model::~Model()
 
     for (auto &m : meshes_)
         m.Clean();
-
 }
 
 void gl00::Model::Draw(Shader& shader)
@@ -70,7 +69,7 @@ gl00::Mesh& gl00::Model::GetMesh(size_t index)
     return meshes_.at(index);
 }
 
-void gl00::Model::LoadModel(std::string& path)
+void gl00::Model::LoadModel(std::filesystem::path& path)
 {
     Assimp::Importer importer;
 
@@ -80,11 +79,11 @@ void gl00::Model::LoadModel(std::string& path)
         fin.close();
     else
     {
-        LOGE("Couldn't open file: %s\n", path.c_str());
+        LOGE("Couldn't open file: %ls\n", path.c_str());
         return;
     }
 
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene)
     {
@@ -92,16 +91,16 @@ void gl00::Model::LoadModel(std::string& path)
         return;
     }
 
-    model_directory_ = path.substr(0, path.find_last_of('/'));
+    model_directory_ = path.parent_path();
 
-    LOGI("model directory: %s\n", model_directory_.c_str());
+    LOGD("model directory: %ls\n", model_directory_.c_str());
 
     ProcessNode(scene->mRootNode, scene);
 }
 
-void gl00::Model::ProcessNode(aiNode * node, const aiScene * scene)
+void gl00::Model::ProcessNode(aiNode* node, const aiScene* scene)
 {
-    LOGI("Processing node\n");
+    LOGD("Processing a model node..\n");
     for (GLuint i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -132,7 +131,7 @@ gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vertices.push_back(vertex);
     }
 
-    LOGI("Number of faces: %d\n", mesh->mNumFaces);
+    LOGD("Number of faces: %d\n", mesh->mNumFaces);
 
     // Setup indices
     for (GLuint i = 0; i < mesh->mNumFaces; i++)
@@ -152,7 +151,8 @@ gl00::Mesh gl00::Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
         std::vector<gl00::Mesh::Texture> specular_maps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specular_maps.begin(), specular_maps.end());
-        LOGI("Found materials:\nTextures: %zd\nSpecular Maps: %zd\n", diffuse_maps.size(), specular_maps.size());
+
+        LOGD("Found materials:\n\tTextures: %zd\n\tSpecular Maps: %zd\n", diffuse_maps.size(), specular_maps.size());
     }
 
     return gl00::Mesh(vertices, indices, textures, instance_count_);
@@ -164,16 +164,17 @@ std::vector<gl00::Mesh::Texture> gl00::Model::LoadMaterialTextures(aiMaterial* m
 
     bool skip = false;
 
-    LOGI("Texture count: %d\n", material->GetTextureCount(type));
+    LOGD("Texture count: %d\n", material->GetTextureCount(type));
     for (GLuint i = 0; i < material->GetTextureCount(type); i++)
     {
-        aiString str;
-        material->GetTexture(type, i, &str);
-        LOGI("material texture: %s\n", str.C_Str());
+        aiString texture_path;
+        material->GetTexture(type, i, &texture_path);
+        LOGD("Loading material: %s\n", texture_path.C_Str());
         for (GLuint j = 0; j < loaded_textures_.size(); ++j)
         {
-            if (loaded_textures_[j].path == str)
+            if (loaded_textures_[j].path.string().compare(texture_path.C_Str()) == 0)
             {
+                LOGD("FOUND CACHED Material: %s\n", texture_path.C_Str());
                 textures.push_back(loaded_textures_[j]);
                 skip = true;
                 break;
@@ -183,9 +184,9 @@ std::vector<gl00::Mesh::Texture> gl00::Model::LoadMaterialTextures(aiMaterial* m
         if (!skip)
         {
             gl00::Mesh::Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), model_directory_);
+            texture.id = TextureFromFile(texture_path.C_Str(), model_directory_.string());
             texture.type = type_name;
-            texture.path = str;
+            texture.path = texture_path.C_Str();
             textures.push_back(texture);
 
             loaded_textures_.push_back(texture);
@@ -213,7 +214,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
 
     glGenTextures(1, &texture_id);
 
-    LOGI("Filename: %s\n", filename.c_str());
+    LOGD("Filename: %s\n", filename.c_str());
 
     unsigned char* image = stbi_load(filename.c_str(), &width, &height, &pixel_bytes, 4);
 
@@ -229,7 +230,7 @@ GLuint gl00::TextureFromFile(const char* path, std::string directory)
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 11);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    LOGI("Image loaded: %s\n", filename.c_str());
+    LOGD("Image loaded: %s\n", filename.c_str());
 
     stbi_image_free(image);
 

@@ -5,6 +5,12 @@
 
 namespace gl00
 {
+    struct MouseCoords
+    {
+        float x;
+        float y;
+    };
+
     class Scene;
 
     class SceneManager
@@ -33,10 +39,14 @@ namespace gl00
         void UpdateMouseMotion(float x, float y);
         void UpdateJoy(float x, float y);
 
+        MouseCoords LastMouseCoords() { return last_mouse_coords_; }
+
         static SceneManager& GetInstance();
     private:
         std::unique_ptr<Scene> current_scene_;
         int screen_width_, screen_height_;
+
+        gl00::MouseCoords last_mouse_coords_;
 
         std::unique_ptr<Scene> scene_to_install_;
         bool has_graphics_;

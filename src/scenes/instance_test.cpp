@@ -12,8 +12,8 @@ gl00::scenes::InstanceTest::InstanceTest() :
 {
     gl00::SceneManager& mgr = gl00::SceneManager::GetInstance();
 
-    projection_ = glm::perspective(glm::radians(45.0f), mgr.GetScreenAspect(), 0.1f, 100.f);
-    view_ = glm::lookAt(view_position_, glm::vec3(.15f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+    //projection_ = glm::perspective(glm::radians(45.0f), mgr.GetScreenAspect(), 0.1f, 100.f);
+    //view_ = glm::lookAt(view_position_, glm::vec3(.15f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 
     camera_.SetPerspective(45.f, mgr.GetScreenAspect(), .1f, 100.f);
     camera_.Position({0.f, 0.5f, 0.5f});
@@ -45,11 +45,12 @@ void gl00::scenes::InstanceTest::OnMouseMotion(float x, float y)
 
 void gl00::scenes::InstanceTest::OnStartGraphics()
 {
-    using ShaderList = std::vector<std::pair <GLenum, std::filesystem::path>>;
     using Vec3 = glm::vec3;
 
-    ShaderList shader_files = { {GL_VERTEX_SHADER, std::filesystem::path("shaders/test.vs.glsl")},
-                                {GL_FRAGMENT_SHADER, std::filesystem::path("shaders/test.fs.glsl")} };
+    gl00::shader_paths shader_files = {
+        {GL_VERTEX_SHADER, std::filesystem::path("shaders/test.vs.glsl")},
+        {GL_FRAGMENT_SHADER, std::filesystem::path("shaders/test.fs.glsl")}
+        };
 
     shader_ = std::make_unique<gl00::Shader>(shader_files);
 

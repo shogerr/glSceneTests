@@ -159,7 +159,7 @@ GLuint gl00::Shader::CreateProgram(std::vector<std::pair<GLenum, std::string>> &
     for (auto s : shaderSources)
         shaders.push_back(CompileShader(s.second.c_str(), s.first));
 
-    LOGI("Finished loading shaders.\n");
+    LOGD("Finished loading shaders.\n");
 
     // Create the shader program.
     program = glCreateProgram();

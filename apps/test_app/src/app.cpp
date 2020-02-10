@@ -1,11 +1,11 @@
-#include <gl00/common.hpp>
-#include <gl00/engine.hpp>
-#include <gl00/scene_manager.hpp>
+#include <gl00/gl00.hpp>
 
 #include "../src/sdl/sdl_helper.hpp"
 
 #include "../src/scenes/instance_test.hpp"
 #include "../src/scenes/test_signal.hpp"
+#include "scenes/ground_scene.hpp"
+#include "scenes/click_bounce.hpp"
 
 constexpr auto WIDTH = 768;
 constexpr auto HEIGHT = 768;
@@ -74,10 +74,10 @@ void Start()
                     //                    mgr->RequestNewScene(new ShaderScene);
                     break;
                 case SDLK_F3:
-                    //                    mgr->RequestNewScene(new gl00::scenes::BezierScene);
+                    mgr.RequestNewScene(std::unique_ptr<gl00::Scene> { new ClickBounce });
                     break;
                 case SDLK_F4:
-                    //                    mgr->RequestNewScene(new gl00::scenes::InstanceTest);
+                    mgr.RequestNewScene(std::unique_ptr<gl00::Scene> { new GroundScene });
                     break;
                 case SDLK_F5:
                     //                    mgr->RequestNewScene(new LightingScene);

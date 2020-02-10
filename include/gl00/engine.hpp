@@ -12,7 +12,6 @@ namespace gl00
         ~Engine();
 
         void DoFrame();
-        static Engine& GetInstance();
 
         void SetScreenDimensions(int width, int height);
         void SetDefaultScene(std::unique_ptr<gl00::Scene> scene);

@@ -1,5 +1,7 @@
 add_executable(renderer
 	src/app.cpp
+	src/scenes/click_bounce.cpp
+	src/scenes/ground_scene.cpp
 	../../src/sdl/sdl_helper.cpp
 	../../src/scenes/instance_test.cpp
 	../../src/scenes/test_signal.cpp
