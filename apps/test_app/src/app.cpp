@@ -59,6 +59,7 @@ void Start()
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 SDL_Log("Down: %d\n", e.button.button);
+                mgr.Poke(e.button.button);
                 break;
             case SDL_MOUSEBUTTONUP:
                 SDL_Log("Up: %d\n", e.button.button);

@@ -1,3 +1,6 @@
+find_package(Bullet CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE LinearMath Bullet3Common BulletDynamics BulletSoftBody)
+
 add_executable(renderer
 	src/app.cpp
 	src/scenes/click_bounce.cpp
@@ -5,16 +8,6 @@ add_executable(renderer
 	../../src/sdl/sdl_helper.cpp
 	../../src/scenes/instance_test.cpp
 	../../src/scenes/test_signal.cpp
-	)
-add_custom_command(TARGET renderer
-	PRE_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
-	${PROJECT_SOURCE_DIR}/src/shaders $<TARGET_FILE_DIR:renderer>/shaders
-	)
-add_custom_command(TARGET renderer
-	PRE_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
-	${PROJECT_SOURCE_DIR}/assets $<TARGET_FILE_DIR:renderer>/assets
 	)
 target_include_directories(renderer
 	PRIVATE ${PROJECT_SOURCE_DIR}/include
@@ -31,6 +24,18 @@ target_link_libraries(renderer
 		SDL2::SDL2main
 		$<$<BOOL:${STATIC_LINK}>:ZLIB::ZLIB>
 		$<$<BOOL:${STATIC_LINK}>:${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/$<$<CONFIG:Debug>:debug/>lib/IrrXML$<$<CONFIG:Debug>:d>.lib>
+		Bullet3Common
+	)
+
+add_custom_command(TARGET renderer
+	PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${PROJECT_SOURCE_DIR}/src/shaders $<TARGET_FILE_DIR:renderer>/shaders
+	)
+add_custom_command(TARGET renderer
+	PRE_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${PROJECT_SOURCE_DIR}/assets $<TARGET_FILE_DIR:renderer>/assets
 	)
 
 install(
